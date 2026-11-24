@@ -8,7 +8,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <title>Windows XP — BLACK//ICE Security Lab</title>
 <style>
-  /* === WINDOWS XP LUNA THEME VARIABLES & RESET === */
+  /* === WINDOWS XP THEME VARIABLES & RESET === */
   :root {
     --xp-blue-dark: #003399;
     --xp-blue-main: #245edb;
@@ -27,13 +27,52 @@
     --xp-orange-glow: #ffaa33;
     --xp-green-bar: #37d23c;
     --xp-red-alert: #d82c2c;
+    --xp-title-grad: linear-gradient(180deg, #0997ff 0%, #0053ee 8%, #0050ee 40%, #06f 88%, #06f 93%, #005bff 95%, #003dd7 100%);
+    --xp-taskbar-grad: linear-gradient(180deg, #3168d5 0%, #4993e6 9%, #2257c9 18%, #245edb 90%, #1941a5 100%);
+    --xp-start-grad: linear-gradient(180deg, #52b852 0%, #3c9c3c 15%, #2e8a2e 85%, #1f691f 100%);
+    --xp-tray-grad: linear-gradient(180deg, #1690e6 0%, #1078cf 20%, #0d66b8 90%, #094f94 100%);
     --font-xp: 'Tahoma', 'Verdana', 'Segoe UI', system-ui, -apple-system, sans-serif;
     --font-mono: 'Lucida Console', 'Courier New', monospace;
     --safe-top: env(safe-area-inset-top, 0px);
     --safe-bottom: env(safe-area-inset-bottom, 0px);
     --safe-left: env(safe-area-inset-left, 0px);
     --safe-right: env(safe-area-inset-right, 0px);
-    --taskbar-h: 38px;
+    --taskbar-h: 42px;
+  }
+
+  /* Olive Green Theme */
+  body.theme-olive {
+    --xp-blue-dark: #4c5928;
+    --xp-blue-main: #829648;
+    --xp-blue-light: #a2b860;
+    --xp-blue-inactive: #b5c28d;
+    --xp-title-grad: linear-gradient(180deg, #b5c879 0%, #869b49 12%, #7d9141 85%, #61732f 100%);
+    --xp-taskbar-grad: linear-gradient(180deg, #98ad59 0%, #b1c474 10%, #7d9141 20%, #7b8f3f 90%, #5c6d2c 100%);
+    --xp-start-grad: linear-gradient(180deg, #e88e45 0%, #cf6f23 15%, #b85b14 85%, #8f4209 100%);
+    --xp-tray-grad: linear-gradient(180deg, #9eb360 0%, #869b49 20%, #6f8236 90%, #566626 100%);
+  }
+
+  /* Silver Theme */
+  body.theme-silver {
+    --xp-blue-dark: #4b4f59;
+    --xp-blue-main: #7d828f;
+    --xp-blue-light: #a8aebd;
+    --xp-blue-inactive: #b8bcc4;
+    --xp-title-grad: linear-gradient(180deg, #d7dae0 0%, #9fa4b0 15%, #8c919e 50%, #737885 88%, #9fa4b0 100%);
+    --xp-taskbar-grad: linear-gradient(180deg, #c2c6d1 0%, #e1e4eb 10%, #9ba0ad 22%, #8c919e 90%, #696e7a 100%);
+    --xp-tray-grad: linear-gradient(180deg, #b0b5c2 0%, #9196a3 20%, #787d8a 90%, #5c606b 100%);
+  }
+
+  /* Royale Noir / Dark Cyber Theme */
+  body.theme-noir {
+    --xp-blue-dark: #14171f;
+    --xp-blue-main: #2a2f3d;
+    --xp-blue-light: #444c63;
+    --xp-blue-inactive: #525866;
+    --xp-title-grad: linear-gradient(180deg, #4b5263 0%, #242833 15%, #191c24 85%, #0e1014 100%);
+    --xp-taskbar-grad: linear-gradient(180deg, #3c4252 0%, #52596e 9%, #232733 18%, #1a1d26 90%, #0f1117 100%);
+    --xp-start-grad: linear-gradient(180deg, #489c48 0%, #2d7a2d 15%, #206120 85%, #144514 100%);
+    --xp-tray-grad: linear-gradient(180deg, #353b4a 0%, #262b36 20%, #1b1f29 90%, #11141c 100%);
   }
 
   * {
@@ -56,6 +95,7 @@
     font-size: 13px;
     color: #000;
     background: #1d64c8;
+    touch-action: manipulation;
   }
 
   /* === BLISS WALLPAPER (SVG + CSS) === */
@@ -79,11 +119,10 @@
     z-index: 0;
   }
 
-  /* Safe-area top status shield so notch never overlaps desktop icons */
   .safe-top-spacer {
     height: var(--safe-top);
     width: 100%;
-    background: linear-gradient(180deg, rgba(0, 24, 72, 0.45) 0%, rgba(0, 24, 72, 0) 100%);
+    background: linear-gradient(180deg, rgba(0, 24, 72, 0.5) 0%, rgba(0, 24, 72, 0) 100%);
     flex-shrink: 0;
     z-index: 2;
   }
@@ -93,21 +132,19 @@
     position: relative;
     flex: 1;
     width: 100%;
-    padding-left: calc(10px + var(--safe-left));
-    padding-right: calc(10px + var(--safe-right));
-    padding-top: 8px;
-    padding-bottom: 8px;
+    padding: 8px calc(10px + var(--safe-right)) 8px calc(10px + var(--safe-left));
     overflow: hidden;
     z-index: 1;
   }
 
   .desktop-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(76px, 82px));
+    grid-template-columns: repeat(auto-fill, minmax(78px, 86px));
     grid-auto-rows: min-content;
     gap: 10px 6px;
     align-content: start;
     height: 100%;
+    overflow-y: auto;
   }
 
   .desk-icon {
@@ -122,18 +159,22 @@
     color: #fff;
     text-align: center;
     cursor: pointer;
-    transition: background 0.12s;
-    min-height: 76px;
+    transition: background 0.12s, transform 0.08s;
+    min-height: 78px;
   }
 
   .desk-icon:active, .desk-icon.selected {
-    background: rgba(11, 97, 255, 0.42);
-    border: 1px dotted rgba(255, 255, 255, 0.85);
+    background: rgba(11, 97, 255, 0.45);
+    border: 1px dotted rgba(255, 255, 255, 0.9);
+  }
+
+  .desk-icon:active {
+    transform: scale(0.96);
   }
 
   .desk-icon svg {
-    width: 38px;
-    height: 38px;
+    width: 40px;
+    height: 40px;
     filter: drop-shadow(1px 2px 2px rgba(0, 0, 0, 0.55));
     margin-bottom: 4px;
     flex-shrink: 0;
@@ -142,9 +183,9 @@
   .desk-icon span {
     font-size: 11px;
     line-height: 1.2;
-    text-shadow: 1px 1px 2px #000, 0 0 4px rgba(0, 0, 0, 0.9);
+    text-shadow: 1px 1px 2px #000, 0 0 4px rgba(0, 0, 0, 0.95);
     word-break: break-word;
-    max-width: 76px;
+    max-width: 80px;
     padding: 1px 3px;
     border-radius: 2px;
   }
@@ -153,14 +194,14 @@
     background: #0b61ff;
   }
 
-  /* === WINDOWS XP LUNA WINDOW SYSTEM === */
+  /* === WINDOWS XP WINDOW SYSTEM === */
   .xp-window {
     position: absolute;
     top: 4px;
     left: calc(6px + var(--safe-left));
     right: calc(6px + var(--safe-right));
     bottom: 6px;
-    max-width: 660px;
+    max-width: 680px;
     margin: 0 auto;
     background: var(--xp-bg-beige);
     border: 3px solid var(--xp-blue-main);
@@ -168,7 +209,7 @@
     border-top-right-radius: 8px;
     border-bottom-left-radius: 3px;
     border-bottom-right-radius: 3px;
-    box-shadow: 0 8px 28px rgba(0, 0, 0, 0.52), inset 0 0 0 1px #7bb3ff;
+    box-shadow: 0 8px 28px rgba(0, 0, 0, 0.55), inset 0 0 0 1px rgba(255, 255, 255, 0.45);
     display: flex;
     flex-direction: column;
     overflow: hidden;
@@ -200,18 +241,10 @@
     to { opacity: 1; transform: scale(1) translateY(0); }
   }
 
-  /* Glossy Luna Title Bar */
   .xp-titlebar {
-    height: 30px;
+    height: 34px;
     flex-shrink: 0;
-    background: linear-gradient(180deg,
-      #0997ff 0%,
-      #0053ee 8%,
-      #0050ee 40%,
-      #06f 88%,
-      #06f 93%,
-      #005bff 95%,
-      #003dd7 100%);
+    background: var(--xp-title-grad);
     padding: 0 5px 0 8px;
     display: flex;
     align-items: center;
@@ -219,14 +252,14 @@
     gap: 6px;
     color: #fff;
     font-weight: 700;
-    font-size: 12px;
-    text-shadow: 1px 1px 1px #0f1089;
+    font-size: 12.5px;
+    text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.7);
     cursor: pointer;
   }
 
   .xp-window.inactive .xp-titlebar {
     background: linear-gradient(180deg, #9db6eb 0%, #7a96df 15%, #7591d9 85%, #5d7cc9 100%);
-    color: #d8e4f8;
+    color: #e4ecfa;
     text-shadow: none;
   }
 
@@ -239,8 +272,8 @@
   }
 
   .xp-title-left svg {
-    width: 16px;
-    height: 16px;
+    width: 17px;
+    height: 17px;
     flex-shrink: 0;
   }
 
@@ -253,19 +286,20 @@
   .xp-controls {
     display: flex;
     align-items: center;
-    gap: 3px;
+    gap: 4px;
     flex-shrink: 0;
   }
 
+  /* Larger mobile-friendly window control buttons */
   .xp-ctrl-btn {
-    width: 24px;
-    height: 22px;
+    width: 28px;
+    height: 25px;
     border-radius: 3px;
     border: 1px solid #fff;
     background: linear-gradient(180deg, #3c8dff 0%, #1559d6 50%, #0b44b8 100%);
     color: #fff;
     font-weight: 900;
-    font-size: 12px;
+    font-size: 13px;
     line-height: 1;
     display: grid;
     place-items: center;
@@ -283,7 +317,6 @@
     background: linear-gradient(180deg, #f37d64 0%, #d8391d 50%, #b8230b 100%);
   }
 
-  /* Classic Menu Strip & Address Bar inside Window */
   .xp-menubar {
     background: #ece9d8;
     border-bottom: 1px solid #d4d0c8;
@@ -291,18 +324,18 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    font-size: 11px;
+    font-size: 11.5px;
     color: #222;
     flex-shrink: 0;
   }
 
   .xp-menu-items {
     display: flex;
-    gap: 10px;
+    gap: 8px;
   }
 
   .xp-menu-items span {
-    padding: 2px 4px;
+    padding: 4px 6px;
     border-radius: 2px;
     cursor: pointer;
   }
@@ -341,7 +374,6 @@
     text-overflow: ellipsis;
   }
 
-  /* Window Content Area */
   .xp-body {
     flex: 1;
     overflow-y: auto;
@@ -372,22 +404,23 @@
   .xp-group-title {
     font-size: 11px;
     font-weight: 700;
-    color: #003399;
+    color: var(--xp-blue-dark);
     margin: 0 0 8px;
     display: flex;
     align-items: center;
+    justify-content: space-between;
     gap: 6px;
   }
 
   .xp-input {
     width: 100%;
-    min-height: 38px;
+    min-height: 42px;
     background: #fff;
     border: 1px solid #7f9db9;
     box-shadow: inset 1px 1px 2px rgba(0, 0, 0, 0.14);
-    padding: 7px 10px;
+    padding: 8px 10px;
     font-family: var(--font-xp);
-    font-size: 15px;
+    font-size: 16px;
     color: #000;
     border-radius: 0;
     outline: none;
@@ -403,12 +436,11 @@
     background: #fff3f3;
   }
 
-  /* Classic XP Push Button */
   .xp-btn {
-    min-height: 38px;
-    padding: 7px 14px;
+    min-height: 42px;
+    padding: 8px 14px;
     font-family: var(--font-xp);
-    font-size: 12px;
+    font-size: 12.5px;
     font-weight: 600;
     color: #000;
     background: linear-gradient(180deg, #ffffff 0%, #f3f3ee 48%, #e4e2d5 100%);
@@ -420,7 +452,7 @@
     align-items: center;
     justify-content: center;
     gap: 6px;
-    transition: box-shadow 0.1s;
+    transition: box-shadow 0.1s, transform 0.06s;
   }
 
   .xp-btn:hover:not(:disabled) {
@@ -445,11 +477,22 @@
     box-shadow: inset 0 0 0 1px #6da6ff;
   }
 
+  .xp-btn.danger {
+    border-color: #8c1616;
+    background: linear-gradient(180deg, #fff5f5 0%, #f7dada 100%);
+    color: #7d0c0c;
+  }
+
+  .xp-btn.safe {
+    border-color: #166b19;
+    background: linear-gradient(180deg, #f3fff3 0%, #d8f5d9 100%);
+    color: #0d4b0f;
+  }
+
   .xp-btn.full {
     width: 100%;
   }
 
-  /* XP Segmented Progress Bar */
   .xp-progress-wrap {
     height: 18px;
     background: #fff;
@@ -474,7 +517,7 @@
     transition: width 0.25s ease;
   }
 
-  /* === QUIZ SPECIFIC STYLES IN XP === */
+  /* === QUIZ SPECIFIC STYLES === */
   .xp-banner {
     background: linear-gradient(135deg, #003399 0%, #245edb 55%, #3a93ff 100%);
     color: #fff;
@@ -483,8 +526,6 @@
     margin-bottom: 10px;
     border: 1px solid #002266;
     box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.35);
-    position: relative;
-    overflow: hidden;
   }
 
   .xp-banner-badge {
@@ -501,9 +542,8 @@
 
   .xp-banner h1 {
     margin: 0 0 5px;
-    font-size: 20px;
+    font-size: 19px;
     line-height: 1.15;
-    letter-spacing: -0.3px;
     text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
   }
 
@@ -520,7 +560,7 @@
     gap: 8px;
   }
 
-  @media (min-width: 460px) {
+  @media (min-width: 480px) {
     .mode-grid {
       grid-template-columns: 1fr 1fr;
     }
@@ -536,7 +576,7 @@
     align-items: center;
     gap: 10px;
     cursor: pointer;
-    min-height: 62px;
+    min-height: 64px;
     box-shadow: 0 1px 2px rgba(0, 0, 0, 0.08);
     transition: border-color 0.12s, box-shadow 0.12s;
   }
@@ -548,8 +588,8 @@
   }
 
   .mode-num {
-    width: 32px;
-    height: 32px;
+    width: 34px;
+    height: 34px;
     border-radius: 4px;
     background: linear-gradient(180deg, #3a93ff 0%, #004ec4 100%);
     color: #fff;
@@ -563,7 +603,7 @@
 
   .mode-info b {
     display: block;
-    font-size: 12px;
+    font-size: 12.5px;
     color: #003399;
     margin-bottom: 2px;
   }
@@ -575,7 +615,6 @@
     line-height: 1.3;
   }
 
-  /* Quiz Question Screen */
   .quiz-hud {
     display: flex;
     align-items: center;
@@ -612,7 +651,7 @@
   }
 
   .q-title {
-    font-size: 15px;
+    font-size: 14.5px;
     font-weight: 700;
     line-height: 1.4;
     color: #111;
@@ -627,13 +666,13 @@
 
   .xp-answers {
     display: grid;
-    gap: 7px;
+    gap: 8px;
   }
 
   .xp-ans-btn {
     width: 100%;
-    min-height: 46px;
-    padding: 9px 10px;
+    min-height: 48px;
+    padding: 10px;
     text-align: left;
     background: #fff;
     border: 1px solid #7f9db9;
@@ -676,15 +715,15 @@
   }
 
   .xp-marker {
-    width: 22px;
-    height: 22px;
+    width: 24px;
+    height: 24px;
     flex-shrink: 0;
     border: 1px solid #1c5180;
     background: linear-gradient(180deg, #fff 0%, #e4e4e4 100%);
     display: grid;
     place-items: center;
     font-weight: 700;
-    font-size: 11px;
+    font-size: 11.5px;
     color: #003399;
     border-radius: 2px;
   }
@@ -710,7 +749,6 @@
     color: #fff;
   }
 
-  /* XP Alert Feedback Box */
   .xp-feedback {
     margin-top: 10px;
     padding: 10px;
@@ -747,7 +785,95 @@
     flex: 1;
   }
 
-  /* Results Certificate */
+  /* === PHISHING / FLAG INSPECTOR MINI-APP === */
+  .email-card {
+    background: #fff;
+    border: 1px solid #7f9db9;
+    border-radius: 3px;
+    padding: 10px;
+    margin-bottom: 10px;
+    font-size: 12px;
+    box-shadow: inset 0 1px 2px rgba(0,0,0,0.06);
+  }
+  .email-meta {
+    border-bottom: 1px solid #dcd9ce;
+    padding-bottom: 6px;
+    margin-bottom: 8px;
+    font-size: 11px;
+    color: #444;
+    line-height: 1.45;
+  }
+  .email-meta b {
+    color: #000;
+  }
+  .email-link-preview {
+    display: inline-block;
+    margin-top: 6px;
+    padding: 4px 8px;
+    background: #f0f4fa;
+    border: 1px dashed #6b8ec2;
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: #003399;
+    word-break: break-all;
+  }
+
+  /* === MINESWEEPER CYBER FIELD === */
+  .mine-hud {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: #c0c0c0;
+    border: 2px inset #fff;
+    padding: 6px 10px;
+    margin-bottom: 10px;
+  }
+  .mine-lcd {
+    background: #000;
+    color: #ff2a2a;
+    font-family: var(--font-mono);
+    font-size: 18px;
+    font-weight: 700;
+    padding: 2px 8px;
+    border: 1px inset #808080;
+    letter-spacing: 1px;
+  }
+  .mine-grid {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 3px;
+    max-width: 310px;
+    margin: 0 auto 10px;
+    background: #808080;
+    padding: 4px;
+    border: 2px inset #fff;
+  }
+  .mine-cell {
+    aspect-ratio: 1 / 1;
+    min-height: 42px;
+    background: #d4d0c8;
+    border: 2px outset #fff;
+    font-weight: 800;
+    font-size: 15px;
+    display: grid;
+    place-items: center;
+    cursor: pointer;
+    padding: 0;
+  }
+  .mine-cell.open {
+    background: #ece9d8;
+    border: 1px solid #b5b2a8;
+    cursor: default;
+  }
+  .mine-cell.flagged {
+    background: #fff6d6;
+  }
+  .mine-cell.boom {
+    background: #ff3b3b;
+    color: #fff;
+  }
+
+  /* === RESULTS CERTIFICATE === */
   .xp-cert {
     background: #fff;
     border: 2px solid #245edb;
@@ -760,7 +886,7 @@
 
   .cert-score {
     font-family: var(--font-mono);
-    font-size: 36px;
+    font-size: 34px;
     font-weight: 800;
     color: #003399;
     margin: 4px 0;
@@ -867,15 +993,16 @@
     border: none;
     font-weight: 700;
     cursor: pointer;
-    padding: 0 3px;
+    padding: 0 4px;
     color: #555;
+    font-size: 14px;
   }
 
   .clippy-avatar {
     pointer-events: auto;
     width: 48px;
     height: 48px;
-    background: rgba(255, 255, 255, 0.85);
+    background: rgba(255, 255, 255, 0.9);
     border: 1px solid #245edb;
     border-radius: 50%;
     display: grid;
@@ -894,7 +1021,7 @@
     position: fixed;
     right: calc(8px + var(--safe-right));
     bottom: calc(var(--taskbar-h) + var(--safe-bottom) + 8px);
-    width: min(295px, calc(100vw - 20px));
+    width: min(300px, calc(100vw - 20px));
     background: #ffffe1;
     border: 1px solid #000;
     border-radius: 7px;
@@ -940,9 +1067,9 @@
     position: fixed;
     left: var(--safe-left);
     bottom: calc(var(--taskbar-h) + var(--safe-bottom));
-    width: min(335px, calc(100vw - var(--safe-left) - var(--safe-right) - 8px));
+    width: min(345px, calc(100vw - var(--safe-left) - var(--safe-right) - 8px));
     background: #fff;
-    border: 2px solid #003399;
+    border: 2px solid var(--xp-blue-dark);
     border-top-left-radius: 8px;
     border-top-right-radius: 8px;
     box-shadow: 4px -2px 18px rgba(0, 0, 0, 0.55);
@@ -963,7 +1090,7 @@
   }
 
   .start-header {
-    background: linear-gradient(180deg, #1b65d9 0%, #3a8df7 45%, #185bc9 100%);
+    background: var(--xp-title-grad);
     padding: 8px 10px;
     display: flex;
     align-items: center;
@@ -990,7 +1117,7 @@
   .start-columns {
     display: grid;
     grid-template-columns: 1.15fr 0.85fr;
-    min-height: 230px;
+    min-height: 245px;
   }
 
   .start-left {
@@ -1023,7 +1150,7 @@
     font-size: 11.5px;
     color: #111;
     cursor: pointer;
-    min-height: 36px;
+    min-height: 38px;
   }
 
   .start-item:hover, .start-item:active {
@@ -1057,12 +1184,13 @@
   }
 
   .start-footer {
-    background: linear-gradient(180deg, #3e87eb 0%, #1d5bc6 100%);
+    background: var(--xp-taskbar-grad);
     padding: 6px 10px;
     display: flex;
-    justify-content: flex-end;
+    justify-content: space-between;
+    align-items: center;
     gap: 8px;
-    border-top: 1px solid #6ba6ff;
+    border-top: 1px solid rgba(255, 255, 255, 0.35);
   }
 
   .start-power-btn {
@@ -1092,12 +1220,7 @@
     padding-bottom: var(--safe-bottom);
     padding-left: var(--safe-left);
     padding-right: var(--safe-right);
-    background: linear-gradient(180deg,
-      #3168d5 0%,
-      #4993e6 9%,
-      #2257c9 18%,
-      #245edb 90%,
-      #1941a5 100%);
+    background: var(--xp-taskbar-grad);
     display: flex;
     align-items: stretch;
     box-shadow: 0 -1px 4px rgba(0, 0, 0, 0.4);
@@ -1110,11 +1233,7 @@
     border: none;
     border-top-right-radius: 12px;
     border-bottom-right-radius: 10px;
-    background: linear-gradient(180deg,
-      #52b852 0%,
-      #3c9c3c 15%,
-      #2e8a2e 85%,
-      #1f691f 100%);
+    background: var(--xp-start-grad);
     box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.65), 2px 0 5px rgba(0, 0, 0, 0.35);
     color: #fff;
     font-family: var(--font-xp);
@@ -1146,13 +1265,13 @@
   }
 
   .task-tab {
-    height: 28px;
+    height: 30px;
     min-width: 78px;
     max-width: 145px;
     padding: 0 8px;
     border-radius: 3px;
-    border: 1px solid #163d96;
-    background: linear-gradient(180deg, #4b8bf5 0%, #2b6be0 100%);
+    border: 1px solid rgba(0, 0, 0, 0.35);
+    background: rgba(255, 255, 255, 0.16);
     color: #fff;
     font-size: 11px;
     font-weight: 600;
@@ -1167,15 +1286,8 @@
   }
 
   .task-tab.active {
-    background: linear-gradient(180deg, #19449e 0%, #1e52bd 100%);
+    background: rgba(0, 0, 0, 0.28);
     box-shadow: inset 1px 1px 3px rgba(0, 0, 0, 0.55);
-    border-color: #0e2969;
-  }
-
-  .task-tab svg {
-    width: 14px;
-    height: 14px;
-    flex-shrink: 0;
   }
 
   .task-tab span {
@@ -1183,11 +1295,10 @@
     text-overflow: ellipsis;
   }
 
-  /* System Tray */
   .systray {
     height: var(--taskbar-h);
-    background: linear-gradient(180deg, #1690e6 0%, #1078cf 20%, #0d66b8 90%, #094f94 100%);
-    border-left: 1px solid #0b4182;
+    background: var(--xp-tray-grad);
+    border-left: 1px solid rgba(0, 0, 0, 0.3);
     box-shadow: inset 1px 0 0 rgba(255, 255, 255, 0.28);
     padding: 0 8px;
     display: flex;
@@ -1201,7 +1312,7 @@
   .tray-btn {
     background: none;
     border: none;
-    padding: 3px;
+    padding: 4px;
     display: grid;
     place-items: center;
     cursor: pointer;
@@ -1213,10 +1324,40 @@
   }
 
   .tray-clock {
-    font-size: 11px;
+    font-size: 11.5px;
     font-weight: 600;
     letter-spacing: 0.2px;
     padding-left: 2px;
+  }
+
+  /* === LANDSCAPE MOBILE ADAPTATION === */
+  @media (orientation: landscape) and (max-height: 500px) {
+    :root {
+      --taskbar-h: 36px;
+    }
+    .xp-window {
+      top: 2px;
+      bottom: 2px;
+    }
+    .xp-titlebar {
+      height: 28px;
+    }
+    .xp-addressbar {
+      display: none;
+    }
+    .xp-body {
+      padding: 8px 10px;
+    }
+    .xp-banner {
+      padding: 8px 10px;
+    }
+    .xp-banner h1 {
+      font-size: 16px;
+    }
+    #clippy-box {
+      transform: scale(0.85);
+      transform-origin: bottom right;
+    }
   }
 
   /* === BSOD EASTER EGG OVERLAY === */
@@ -1253,7 +1394,6 @@
     display: none !important;
   }
 
-  /* Password Strength Meter Bar */
   .pw-meter {
     height: 12px;
     background: #e0ded3;
@@ -1265,6 +1405,35 @@
     height: 100%;
     width: 0%;
     transition: width 0.2s, background 0.2s;
+  }
+
+  .theme-swatches {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
+  }
+  .theme-opt {
+    padding: 8px;
+    border: 1px solid #7f9db9;
+    background: #fff;
+    border-radius: 3px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    font-size: 12px;
+    font-weight: 600;
+  }
+  .theme-opt.active {
+    border: 2px solid #245edb;
+    background: #eef4ff;
+  }
+  .swatch-dot {
+    width: 18px;
+    height: 18px;
+    border-radius: 3px;
+    border: 1px solid #333;
+    flex-shrink: 0;
   }
 </style>
 </head>
@@ -1290,7 +1459,6 @@
       </linearGradient>
     </defs>
     <rect width="800" height="400" fill="url(#skyGrad)"/>
-    <!-- Soft XP Clouds -->
     <g fill="#ffffff" opacity="0.72">
       <ellipse cx="180" cy="110" rx="95" ry="26"/>
       <ellipse cx="235" cy="102" rx="65" ry="22"/>
@@ -1298,12 +1466,10 @@
       <ellipse cx="610" cy="85" rx="110" ry="28"/>
       <ellipse cx="555" cy="96" rx="70" ry="20"/>
     </g>
-    <!-- Rolling Green Hills -->
     <path d="M-40,390 Q240,285 520,365 T860,340 L860,600 L-40,600 Z" fill="url(#hillBack)"/>
     <path d="M-40,425 Q190,335 450,415 T860,385 L860,600 L-40,600 Z" fill="url(#hillFront)"/>
   </svg>
 
-  <!-- Safe Area Top Bar Spacer -->
   <div class="safe-top-spacer"></div>
 
   <!-- Main Workspace -->
@@ -1311,7 +1477,6 @@
     <!-- Desktop Icons Grid -->
     <div class="desktop-grid" id="desktopIcons">
       <button type="button" class="desk-icon" data-open="win-quiz">
-        <!-- Shield + Terminal XP Icon -->
         <svg viewBox="0 0 48 48">
           <path d="M24 4 L40 10 V23 C40 34 32 41 24 45 C16 41 8 34 8 23 V10 Z" fill="#245edb" stroke="#fff" stroke-width="2.5"/>
           <path d="M24 8 L36 12.5 V23 C36 31.5 30 37 24 40.5 Z" fill="#3a93ff"/>
@@ -1320,20 +1485,36 @@
         <span>BLACK//ICE Lab</span>
       </button>
 
-      <button type="button" class="desk-icon" data-open="win-mycomp">
-        <!-- My Computer XP Icon -->
+      <button type="button" class="desk-icon" data-open="win-inspector">
         <svg viewBox="0 0 48 48">
-          <rect x="6" y="7" width="36" height="26" rx="3" fill="#e6e4d8" stroke="#2c4875" stroke-width="2"/>
-          <rect x="10" y="11" width="28" height="18" fill="#1e6bd6"/>
-          <path d="M10 24 Q20 19 38 23 V29 H10 Z" fill="#52b838"/>
-          <rect x="18" y="33" width="12" height="4" fill="#b8b5a8"/>
-          <rect x="11" y="37" width="26" height="4" rx="1.5" fill="#dcd9cc" stroke="#555" stroke-width="1.5"/>
+          <rect x="6" y="10" width="36" height="26" rx="3" fill="#fff" stroke="#245edb" stroke-width="2.5"/>
+          <path d="M6 12 L24 25 L42 12" fill="none" stroke="#245edb" stroke-width="2.5"/>
+          <circle cx="36" cy="34" r="9" fill="#ffcc00" stroke="#996600" stroke-width="2"/>
+          <text x="36" y="38" text-anchor="middle" font-size="12" font-weight="bold" fill="#000">!</text>
         </svg>
-        <span>Мой компьютер</span>
+        <span>Детектор фишинга</span>
+      </button>
+
+      <button type="button" class="desk-icon" data-open="win-mines">
+        <svg viewBox="0 0 48 48">
+          <rect x="8" y="8" width="32" height="32" rx="4" fill="#d4d0c8" stroke="#444" stroke-width="2"/>
+          <circle cx="24" cy="24" r="8" fill="#111"/>
+          <path d="M24 11 V37 M11 24 H37 M15 15 L33 33 M33 15 L15 33" stroke="#111" stroke-width="2.5"/>
+          <circle cx="21" cy="21" r="2" fill="#fff"/>
+        </svg>
+        <span>Сапёр Угроз</span>
+      </button>
+
+      <button type="button" class="desk-icon" data-open="win-pw">
+        <svg viewBox="0 0 48 48">
+          <circle cx="17" cy="24" r="9" fill="#ffd23f" stroke="#996b00" stroke-width="2.5"/>
+          <circle cx="15" cy="24" r="3" fill="#fff"/>
+          <path d="M26 22 H42 V27 H38 V31 H34 V27 H31 V30 H26 Z" fill="#ffd23f" stroke="#996b00" stroke-width="2"/>
+        </svg>
+        <span>Тест пароля</span>
       </button>
 
       <button type="button" class="desk-icon" data-open="win-notepad">
-        <!-- Notepad XP Icon -->
         <svg viewBox="0 0 48 48">
           <rect x="9" y="6" width="30" height="36" rx="2" fill="#fff" stroke="#3568b8" stroke-width="2"/>
           <rect x="9" y="6" width="30" height="7" fill="#3a93ff"/>
@@ -1344,18 +1525,18 @@
         <span>Шпаргалка.txt</span>
       </button>
 
-      <button type="button" class="desk-icon" data-open="win-pw">
-        <!-- Key / Password Checker XP Icon -->
+      <button type="button" class="desk-icon" data-open="win-mycomp">
         <svg viewBox="0 0 48 48">
-          <circle cx="17" cy="24" r="9" fill="#ffd23f" stroke="#996b00" stroke-width="2.5"/>
-          <circle cx="15" cy="24" r="3" fill="#fff"/>
-          <path d="M26 22 H42 V27 H38 V31 H34 V27 H31 V30 H26 Z" fill="#ffd23f" stroke="#996b00" stroke-width="2"/>
+          <rect x="6" y="7" width="36" height="26" rx="3" fill="#e6e4d8" stroke="#2c4875" stroke-width="2"/>
+          <rect x="10" y="11" width="28" height="18" fill="#1e6bd6"/>
+          <path d="M10 24 Q20 19 38 23 V29 H10 Z" fill="#52b838"/>
+          <rect x="18" y="33" width="12" height="4" fill="#b8b5a8"/>
+          <rect x="11" y="37" width="26" height="4" rx="1.5" fill="#dcd9cc" stroke="#555" stroke-width="1.5"/>
         </svg>
-        <span>Генератор и тест пароля</span>
+        <span>Мой компьютер</span>
       </button>
 
       <button type="button" class="desk-icon" data-open="win-trash">
-        <!-- Recycle Bin XP Icon -->
         <svg viewBox="0 0 48 48">
           <path d="M13 14 H35 L32 41 H16 Z" fill="#d8e8f8" stroke="#2c5899" stroke-width="2"/>
           <rect x="11" y="10" width="26" height="4" rx="1.5" fill="#4f94e8" stroke="#1e4278" stroke-width="1.5"/>
@@ -1372,7 +1553,7 @@
       <div class="xp-titlebar" data-focus="win-quiz">
         <div class="xp-title-left">
           <svg viewBox="0 0 24 24"><path d="M12 2L20 5V11C20 16.5 16.5 20.5 12 22C7.5 20.5 4 16.5 4 11V5L12 2Z" fill="#3a93ff" stroke="#fff" stroke-width="1.5"/></svg>
-          <span class="xp-title-text">BLACK//ICE XP — Security Lab [v2.6]</span>
+          <span class="xp-title-text">BLACK//ICE XP — Security Lab [v3.0]</span>
         </div>
         <div class="xp-controls">
           <button type="button" class="xp-ctrl-btn" data-min="win-quiz" title="Свернуть">_</button>
@@ -1415,14 +1596,14 @@
                 <div class="mode-num">01</div>
                 <div class="mode-info">
                   <b>TRAINING</b>
-                  <small>12 кейсов · без таймера · подробный разбор</small>
+                  <small>15 кейсов · без таймера · подробный разбор</small>
                 </div>
               </button>
               <button type="button" class="xp-mode-card" data-mode="time">
                 <div class="mode-num">02</div>
                 <div class="mode-info">
                   <b>TIME ATTACK</b>
-                  <small>12 кейсов · 20 секунд на решение</small>
+                  <small>15 кейсов · 20 секунд на решение</small>
                 </div>
               </button>
               <button type="button" class="xp-mode-card" data-mode="champ">
@@ -1436,19 +1617,19 @@
                 <div class="mode-num" style="background:linear-gradient(180deg,#f36b4f,#b8230b);border-color:#690d00;">04</div>
                 <div class="mode-info">
                   <b>FINAL BOSS</b>
-                  <small>8 сложных кейсов · множественный выбор</small>
+                  <small>10 сложных кейсов · множественный выбор</small>
                 </div>
               </button>
             </div>
           </div>
-          <div style="font-size:11px;color:#555;text-align:center;">Подсказка: ищи не самый быстрый, а самый безопасный ход.</div>
+          <div style="font-size:11px;color:#555;text-align:center;">Варианты ответов перемешиваются случайно перед каждым вопросом.</div>
         </div>
 
         <!-- SCREEN 2: ACTIVE QUIZ -->
         <div id="screen-game" class="hidden">
           <div class="quiz-hud">
             <span id="modeName">TRAINING</span>
-            <span id="caseTag">КЕЙС 01 / 12</span>
+            <span id="caseTag">КЕЙС 01 / 15</span>
             <span id="scoreNow">0 ОЧКОВ</span>
           </div>
 
@@ -1478,7 +1659,7 @@
         <div id="screen-results" class="hidden">
           <div class="xp-cert">
             <div style="font-size:10px;font-weight:700;color:#245edb;letter-spacing:0.6px;">WINDOWS XP SECURITY AUDIT REPORT</div>
-            <div class="cert-score" id="finalScore">0/12</div>
+            <div class="cert-score" id="finalScore">0/15</div>
             <div class="cert-rank" id="rank">ЦИФРОВОЙ РАЗВЕДЧИК</div>
             <p id="description" style="margin:6px 0 0;font-size:12px;line-height:1.45;color:#222;"></p>
           </div>
@@ -1502,13 +1683,76 @@
     </section>
 
     <!-- =========================================================
-         WINDOW 2: МОЙ КОМПЬЮТЕР (SYSTEM INFO & AGENT PROFILE)
+         WINDOW 2: ДЕТЕКТОР ФИШИНГА (RED FLAG / GREEN FLAG)
+         ========================================================= -->
+    <section class="xp-window minimized" id="win-inspector" data-title="Детектор фишинга" aria-label="Детектор фишинга">
+      <div class="xp-titlebar" data-focus="win-inspector">
+        <div class="xp-title-left">
+          <svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2" fill="#fff" stroke="#fff"/><path d="M3 7L12 13L21 7" fill="none" stroke="#245edb" stroke-width="2"/></svg>
+          <span class="xp-title-text">Анализатор сообщений — Красный / Зелёный флаг</span>
+        </div>
+        <div class="xp-controls">
+          <button type="button" class="xp-ctrl-btn" data-min="win-inspector">_</button>
+          <button type="button" class="xp-ctrl-btn" data-max="win-inspector">□</button>
+          <button type="button" class="xp-ctrl-btn close" data-close="win-inspector">×</button>
+        </div>
+      </div>
+      <div class="xp-body">
+        <div class="xp-groupbox">
+          <div class="xp-group-title">
+            <span>ИНСПЕКТОР СООБЩЕНИЙ И ССЫЛОК</span>
+            <span id="inspCounter">1 / 6</span>
+          </div>
+          <div class="email-card" id="inspCard"></div>
+          <div class="xp-feedback hidden" id="inspFeedback"></div>
+          <div class="xp-actions-row" id="inspButtons">
+            <button type="button" class="xp-btn danger" id="inspRedBtn">🚩 Красный флаг (Угроза)</button>
+            <button type="button" class="xp-btn safe" id="inspGreenBtn">✅ Зелёный флаг (Норма)</button>
+          </div>
+          <div class="xp-actions-row hidden" id="inspNextRow">
+            <button type="button" class="xp-btn primary full" id="inspNextBtn">Следующее сообщение →</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- =========================================================
+         WINDOW 3: САПЁР УГРОЗ (XP MINESWEEPER MINI-GAME)
+         ========================================================= -->
+    <section class="xp-window minimized" id="win-mines" data-title="Сапёр Угроз" aria-label="Сапёр Угроз">
+      <div class="xp-titlebar" data-focus="win-mines">
+        <div class="xp-title-left">
+          <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="6" fill="#111" stroke="#fff" stroke-width="1.5"/></svg>
+          <span class="xp-title-text">Сапёр Угроз XP — Поиск троянов</span>
+        </div>
+        <div class="xp-controls">
+          <button type="button" class="xp-ctrl-btn" data-min="win-mines">_</button>
+          <button type="button" class="xp-ctrl-btn" data-max="win-mines">□</button>
+          <button type="button" class="xp-ctrl-btn close" data-close="win-mines">×</button>
+        </div>
+      </div>
+      <div class="xp-body">
+        <div class="xp-groupbox">
+          <div class="xp-group-title">ОЧИСТИ СЕКТОР ДИСКА ОТ 6 ТРОЯНОВ</div>
+          <div class="mine-hud">
+            <div class="mine-lcd" id="mineLeft">006</div>
+            <button type="button" class="xp-btn" id="mineResetBtn" style="min-height:34px;padding:4px 10px;font-size:16px;">🙂</button>
+            <button type="button" class="xp-btn" id="mineModeBtn" style="min-height:34px;padding:4px 10px;font-size:11.5px;">Режим: 🔍 Открыть</button>
+          </div>
+          <div class="mine-grid" id="mineGrid"></div>
+          <div id="mineStatus" style="text-align:center;font-size:11.5px;color:#333;">Нажимай на клетки или переключись на 🚩 Флаг (либо удерживай палец), чтобы отметить угрозу.</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- =========================================================
+         WINDOW 4: МОЙ КОМПЬЮТЕР (SYSTEM INFO & THEMES)
          ========================================================= -->
     <section class="xp-window minimized" id="win-mycomp" data-title="Мой компьютер" aria-label="Мой компьютер">
       <div class="xp-titlebar" data-focus="win-mycomp">
         <div class="xp-title-left">
           <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="13" rx="1.5" fill="#1e6bd6" stroke="#fff" stroke-width="1.5"/><rect x="8" y="18" width="8" height="2" fill="#fff"/></svg>
-          <span class="xp-title-text">Мой компьютер — Свойства системы</span>
+          <span class="xp-title-text">Мой компьютер — Свойства и оформление</span>
         </div>
         <div class="xp-controls">
           <button type="button" class="xp-ctrl-btn" data-min="win-mycomp">_</button>
@@ -1519,9 +1763,17 @@
       <div class="xp-body">
         <div class="xp-groupbox">
           <div class="xp-group-title">Система:</div>
-          <p style="margin:0 0 4px;font-size:12px;"><b>Microsoft Windows XP</b></p>
-          <p style="margin:0 0 4px;font-size:12px;">Cyber Defense Edition (Service Pack 3)</p>
-          <p style="margin:0;font-size:11px;color:#555;">Ядро: BLACK//ICE Mobile Sandbox · Safe-Area Ready</p>
+          <p style="margin:0 0 4px;font-size:12px;"><b>Microsoft Windows XP</b> — Cyber Defense Edition (SP3)</p>
+          <p style="margin:0;font-size:11px;color:#555;">Ядро: BLACK//ICE Mobile Sandbox · Safe-Area & Touch Ready</p>
+        </div>
+        <div class="xp-groupbox">
+          <div class="xp-group-title">Тема оформления Windows XP:</div>
+          <div class="theme-swatches" id="themeSwatches">
+            <button type="button" class="theme-opt active" data-theme="default"><span class="swatch-dot" style="background:#245edb;"></span>Классическая синяя</button>
+            <button type="button" class="theme-opt" data-theme="olive"><span class="swatch-dot" style="background:#829648;"></span>Оливковая</button>
+            <button type="button" class="theme-opt" data-theme="silver"><span class="swatch-dot" style="background:#8c919e;"></span>Серебристая</button>
+            <button type="button" class="theme-opt" data-theme="noir"><span class="swatch-dot" style="background:#232733;"></span>Royale Noir</button>
+          </div>
         </div>
         <div class="xp-groupbox">
           <div class="xp-group-title">Профиль текущего пользователя:</div>
@@ -1534,7 +1786,7 @@
     </section>
 
     <!-- =========================================================
-         WINDOW 3: БЛОКНОТ (ШПАРГАЛКА И ОТЧЁТЫ)
+         WINDOW 5: БЛОКНОТ (ШПАРГАЛКА И ОТЧЁТЫ)
          ========================================================= -->
     <section class="xp-window minimized" id="win-notepad" data-title="Шпаргалка.txt" aria-label="Блокнот">
       <div class="xp-titlebar" data-focus="win-notepad">
@@ -1560,7 +1812,7 @@
     </section>
 
     <!-- =========================================================
-         WINDOW 4: ПРОВЕРКА И ГЕНЕРАТОР ПАРОЛЕЙ
+         WINDOW 6: ПРОВЕРКА И ГЕНЕРАТОР ПАРОЛЕЙ
          ========================================================= -->
     <section class="xp-window minimized" id="win-pw" data-title="Тест пароля" aria-label="Тест пароля">
       <div class="xp-titlebar" data-focus="win-pw">
@@ -1581,13 +1833,14 @@
           <div class="pw-meter"><div class="pw-meter-bar" id="pwBar"></div></div>
           <div id="pwVerdict" style="font-size:12px;font-weight:700;color:#333;">Ожидание ввода...</div>
           <div id="pwTime" style="font-size:11px;color:#555;margin-top:3px;"></div>
+          <div id="pwTips" style="font-size:11px;color:#003399;margin-top:6px;"></div>
         </div>
         <button type="button" class="xp-btn primary full" id="genPwBtn">🎲 Сгенерировать надёжную парольную фразу</button>
       </div>
     </section>
 
     <!-- =========================================================
-         WINDOW 5: КОРЗИНА (EASTER EGG)
+         WINDOW 7: КОРЗИНА (EASTER EGG)
          ========================================================= -->
     <section class="xp-window minimized" id="win-trash" data-title="Корзина" aria-label="Корзина">
       <div class="xp-titlebar" data-focus="win-trash">
@@ -1640,7 +1893,7 @@
         <svg width="15" height="15" viewBox="0 0 24 24"><path d="M12 2L20 5V11C20 16.5 16.5 20.5 12 22C7.5 20.5 4 16.5 4 11V5L12 2Z" fill="#d82c2c"/><path d="M12 7V13M12 16V17" stroke="#fff" stroke-width="2.4" stroke-linecap="round"/></svg>
         Центр обеспечения безопасности
       </span>
-      <button type="button" id="closeBalloon" style="background:none;border:none;font-weight:700;cursor:pointer;">×</button>
+      <button type="button" id="closeBalloon" style="background:none;border:none;font-weight:700;cursor:pointer;font-size:15px;">×</button>
     </div>
     <div>Ваш компьютер может быть подвергнут риску! Пройдите протокол <b>BLACK//ICE</b>, чтобы проверить навыки защиты.</div>
   </div>
@@ -1659,17 +1912,17 @@
           <svg viewBox="0 0 24 24"><path d="M12 2L20 5V11C20 16.5 16.5 20.5 12 22C7.5 20.5 4 16.5 4 11V5L12 2Z" fill="#245edb"/></svg>
           <div><b>BLACK//ICE Lab</b><small>Тест кибербезопасности</small></div>
         </button>
+        <button type="button" class="start-item" data-open="win-inspector">
+          <svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2" fill="#ffcc00"/><path d="M3 7L12 13L21 7" fill="none" stroke="#000" stroke-width="1.5"/></svg>
+          <div><b>Детектор фишинга</b><small>Красный / Зелёный флаг</small></div>
+        </button>
+        <button type="button" class="start-item" data-open="win-mines">
+          <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="7" fill="#222"/><circle cx="10" cy="10" r="1.5" fill="#fff"/></svg>
+          <div><b>Сапёр Угроз</b><small>Мини-игра XP</small></div>
+        </button>
         <button type="button" class="start-item" data-open="win-pw">
           <svg viewBox="0 0 24 24"><circle cx="9" cy="12" r="4.5" fill="#f5b800"/><path d="M13 11H21V14H19V16H17V14H13Z" fill="#f5b800"/></svg>
           <div><b>Тест пароля</b><small>Проверка стойкости</small></div>
-        </button>
-        <button type="button" class="start-item" data-open="win-notepad">
-          <svg viewBox="0 0 24 24"><rect x="4" y="3" width="16" height="18" fill="#fff" stroke="#3568b8" stroke-width="1.5"/><rect x="4" y="3" width="16" height="4" fill="#3a93ff"/></svg>
-          <div><b>Блокнот</b><small>Шпаргалка по защите</small></div>
-        </button>
-        <button type="button" class="start-item" id="startClippyToggle">
-          <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" fill="#ffe866" stroke="#b38f00" stroke-width="1.5"/><text x="12" y="16" text-anchor="middle" font-size="12" font-weight="bold">?</text></svg>
-          <div><b>Скрепыш (ИИ)</b><small>Показать / скрыть</small></div>
         </button>
       </div>
       <div class="start-right">
@@ -1677,17 +1930,24 @@
           <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="12" fill="#245edb"/><rect x="8" y="17" width="8" height="2" fill="#555"/></svg>
           <span>Мой компьютер</span>
         </button>
+        <button type="button" class="start-item" data-open="win-notepad">
+          <svg viewBox="0 0 24 24"><rect x="4" y="3" width="16" height="18" fill="#fff" stroke="#3568b8" stroke-width="1.5"/></svg>
+          <span>Шпаргалка</span>
+        </button>
         <button type="button" class="start-item" data-open="win-trash">
           <svg viewBox="0 0 24 24"><path d="M6 7H18L16.5 21H7.5Z" fill="#7ab3f5"/></svg>
           <span>Корзина</span>
         </button>
-        <button type="button" class="start-item" id="startBalloonBtn">
-          <svg viewBox="0 0 24 24"><path d="M12 2L20 5V11C20 16.5 16.5 20.5 12 22C7.5 20.5 4 16.5 4 11V5L12 2Z" fill="#d82c2c"/></svg>
-          <span>Центр защиты</span>
+        <button type="button" class="start-item" id="startClippyToggle">
+          <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" fill="#ffe866" stroke="#b38f00" stroke-width="1.5"/><text x="12" y="16" text-anchor="middle" font-size="12" font-weight="bold">?</text></svg>
+          <span>Скрепыш</span>
         </button>
       </div>
     </div>
     <div class="start-footer">
+      <button type="button" class="start-power-btn" id="startBalloonBtn">
+        <span>🛡️ Центр защиты</span>
+      </button>
       <button type="button" class="start-power-btn" id="bsodTrigger">
         <span style="display:inline-grid;place-items:center;width:18px;height:18px;background:#e04328;border:1px solid #fff;border-radius:3px;font-weight:900;">⏻</span>
         <span>Выключение</span>
@@ -1698,7 +1958,6 @@
   <!-- BOTTOM TASKBAR -->
   <footer id="taskbar">
     <button type="button" id="start-btn" aria-expanded="false">
-      <!-- Classic 4-color Windows Flag -->
       <svg width="18" height="18" viewBox="0 0 24 24">
         <path d="M2 5 Q7 3 11 5 V11 Q7 9 2 11 Z" fill="#f25022"/>
         <path d="M13 5 Q17 7 22 5 V11 Q17 13 13 11 Z" fill="#7fba00"/>
@@ -1803,7 +2062,7 @@ class XPSoundEngine {
 const xpAudio = new XPSoundEngine();
 
 /* =====================================================================
-   2. QUESTION DATABASE (ORIGINAL 10 + 7 + MOBILE CYBER HYGIENE CASES)
+   2. QUESTION DATABASE (15 STANDARD + 10 BOSS CASES)
    ===================================================================== */
 const standard = [
   {q:"Тебе пришло письмо: «Аккаунт заблокируют через 10 минут. Срочно перейдите по ссылке». Что делать?",a:["Сразу перейти по ссылке","Самостоятельно открыть официальный сайт и проверить уведомления","Ответить на письмо","Переслать ссылку друзьям"],c:1,e:"Срочность и угроза блокировки — приём давления. Проверяй уведомления через официальный сайт или приложение."},
@@ -1817,7 +2076,10 @@ const standard = [
   {q:"Знакомый прислал файл, но сообщение странное: «Срочно открой, там фото с тобой». Что разумнее?",a:["Открыть сразу","Уточнить у отправителя другим способом","Отключить защиту и открыть","Скачать на телефон — там безопаснее"],c:1,e:"Аккаунт знакомого могли взломать для рассылки вредоносных файлов (.apk, .exe). Свяжись с ним по телефону или в другом мессенджере."},
   {q:"Ты удалил файл и очистил корзину. Можно ли гарантировать, что он исчез навсегда?",a:["Да, очистка корзины всегда стирает данные","Да, если перезагрузить компьютер","Нет, удаление обычно не гарантирует немедленного физического стирания данных","Да, если файл маленький"],c:2,e:"Обычное удаление лишь помечает сектора как свободные. Для конфиденциальных файлов используют шифрование диска и шредеры."},
   {q:"В мессенджере прислали ссылку: «Проголосуй за племянницу в конкурсе!». На странице просят ввести номер телефона и код из приложения. Твои действия?",a:["Ввести данные — это же помощь знакомым","Закрыть страницу: это схема угона аккаунта через привязку устройства","Ввести только номер телефона","Переслать ссылку в семейный чат"],c:1,e:"Так злоумышленники подключают свой браузер как новое устройство к твоему мессенджеру и получают доступ ко всем чатам."},
-  {q:"В аэропорту или кафе ты видишь бесплатную USB-розетку без блока питания. Как зарядить телефон безопаснее?",a:["Подключить напрямую кабелем в USB-порт","Использовать свой сетевой адаптер от обычной розетки 220В или пауэрбанк","Включить режим полёта и подключить в USB","Разрешить передачу данных при подключении"],c:1,e:"Через публичный USB-порт возможна атака Juice Jacking (передача данных вместо только питания). Свой адаптер или пауэрбанк полностью исключают риск."}
+  {q:"В аэропорту или кафе ты видишь бесплатную USB-розетку без блока питания. Как зарядить телефон безопаснее?",a:["Подключить напрямую кабелем в USB-порт","Использовать свой сетевой адаптер от обычной розетки 220В или пауэрбанк","Включить режим полёта и подключить в USB","Разрешить передачу данных при подключении"],c:1,e:"Через публичный USB-порт возможна атака Juice Jacking (передача данных вместо только питания). Свой адаптер или пауэрбанк полностью исключают риск."},
+  {q:"Сервис проверки утечек сообщил, что твой старый пароль от форума попал в открытую базу. Что нужно сделать в первую очередь?",a:["Ничего, если этот форум тебе больше не нужен","Сменить пароль везде, где использовался этот же или похожий пароль, и включить 2FA","Удалить историю браузера","Перезагрузить роутер"],c:1,e:"Мошенники используют автоматический перебор утекших связок «почта + пароль» (Credential Stuffing) на банках, почте и соцсетях."},
+  {q:"В мессенджере прислали видеофайл с названием «Вечеринка_2026.mp4.apk». Что это за файл?",a:["Обычное видео высокого качества","Установочный пакет программы для Android, замаскированный под видео","Архив с фотографиями","Голосовое сообщение"],c:1,e:"Система смотрит на последнее расширение после точки (.apk). Установка такого файла даёт трояну доступ к SMS и банковским приложениям."},
+  {q:"Вместо пароля сайт предлагает создать Passkey (ключ доступа по отпечатку пальца или Face ID). Насколько это безопасно?",a:["Менее безопасно, чем пароль «123456»","Очень надёжно: криптографический ключ привязан к домену и защищён от фишинга","Опасно, потому что отпечаток пальца отправляется на сайт","Работает только без интернета"],c:1,e:"Passkey использует асимметричную криптографию: биометрия остаётся только внутри телефона, а поддельный сайт не сможет запросить ключ."}
 ];
 
 const boss = [
@@ -1828,11 +2090,13 @@ const boss = [
   {q:"На общем компьютере ты вошёл в свою почту. Что важно сделать перед уходом?",a:["Просто закрыть вкладку крестиком","Нажать «Выйти» из аккаунта и убедиться, что браузер не сохранил пароль","Оставить почту открытой для следующего человека","Удалить историю посещений, не выходя из профиля"],c:[1],e:"Закрытие вкладки не завершает сессию (cookie остаются активными). Всегда нажимай «Выход» и используй режим Инкогнито на чужих ПК."},
   {q:"Какие разрешения НЕ нужны простому приложению-фонарику или калькулятору? Выбери ВСЕ лишние.",a:["Доступ к списку контактов","Доступ к микрофону и записи звонков","Доступ к чтению SMS-сообщений","Базовые вычисления на экране"],c:[0,1,2],multi:true,e:"Принцип минимальных привилегий: фонарику и калькулятору не нужны контакты, микрофон и SMS. Лишние права — признак шпионского ПО."},
   {q:"В общем чате публикуют скриншот, где видны чужая фамилия, номер телефона и адрес. Как поступить?",a:["Переслать дальше для обсуждения","Оставить: это же не пароль от банка","Не распространять и попросить автора удалить или замазать персональные данные","Сохранить в открытый канал"],c:[2],e:"Персональные данные (номер телефона, ФИО, адрес) используются для социальной инженерии и доксинга. Не распространяй их."},
-  {q:"Тебе звонят «из службы безопасности» и просят продиктовать код или перевести деньги на «безопасный счёт». Выбери ВСЕ правильные действия.",a:["Немедленно положить трубку","Назвать только последние 4 цифры карты","Перезвонить в организацию самостоятельно по официальному номеру с сайта или карты","Перевести средства, чтобы их «спасти»"],c:[0,2],multi:true,e:"Никаких «безопасных счетов» не существует. Единственно верная реакция на давление по телефону — прервать разговор и перезвонить самому."}
+  {q:"Тебе звонят «из службы безопасности» и просят продиктовать код или перевести деньги на «безопасный счёт». Выбери ВСЕ правильные действия.",a:["Немедленно положить трубку","Назвать только последние 4 цифры карты","Перезвонить в организацию самостоятельно по официальному номеру с сайта или карты","Перевести средства, чтобы их «спасти»"],c:[0,2],multi:true,e:"Никаких «безопасных счетов» не существует. Единственно верная реакция на давление по телефону — прервать разговор и перезвонить самому."},
+  {q:"Смартфон внезапно потерял мобильную сеть (появился значок «Нет сети»), хотя у других людей рядом связь работает. Какая атака возможна?",a:["Обычное обновление погоды","Подмена SIM-карты (SIM-swapping) злоумышленником для перехвата SMS-кодов","Разряд батареи наушников","Автоматическая очистка кэша"],c:[1],e:"При перевыпуске SIM-карты мошенниками старая карта мгновенно отключается от сети. Нужно срочно звонить оператору и в банк с другого номера."},
+  {q:"Какие привычки снижают риск при использовании облачных хранилищ и фотогалереи? Выбери ВСЕ верные.",a:["Не хранить в незашифрованных заметках фото паспорта, банковских карт и seed-фразы","Настроить доступ к общим ссылкам только по приглашению или с паролем","Делать все рабочие папки публичными по ссылке для удобства","Включить 2FA на аккаунт облачного хранилища"],c:[0,1,3],multi:true,e:"Публичные ссылки индексируются или утекают, а при взломе аккаунта без 2FA фото документов сразу попадают в руки мошенников."}
 ];
 
 /* =====================================================================
-   3. WINDOW MANAGER & DESKTOP SHELL LOGIC
+   3. WINDOW MANAGER, THEMES & DESKTOP SHELL LOGIC
    ===================================================================== */
 const $ = id => document.getElementById(id);
 let zCounter = 20;
@@ -1867,8 +2131,7 @@ function minimizeWindow(winId) {
   xpAudio.click();
   const target = $(winId);
   if (target) {
-    target.classList.add("minimized");
-    target.classList.add("inactive");
+    target.classList.add("minimized", "inactive");
   }
   renderTaskbar();
 }
@@ -1886,8 +2149,7 @@ function closeWindow(winId) {
   xpAudio.click();
   const target = $(winId);
   if (target) {
-    target.classList.add("minimized");
-    target.classList.add("inactive");
+    target.classList.add("minimized", "inactive");
     target.dataset.closed = "true";
   }
   renderTaskbar();
@@ -1906,17 +2168,13 @@ function renderTaskbar() {
     title.textContent = w.dataset.title || "Окно";
     tab.appendChild(title);
     tab.addEventListener("click", () => {
-      if (isActive) {
-        minimizeWindow(w.id);
-      } else {
-        focusWindow(w.id);
-      }
+      if (isActive) minimizeWindow(w.id);
+      else focusWindow(w.id);
     });
     container.appendChild(tab);
   });
 }
 
-// Wire up desktop icons & window controls
 document.querySelectorAll("[data-open]").forEach(el => {
   el.addEventListener("click", () => {
     const id = el.dataset.open;
@@ -1943,6 +2201,19 @@ document.querySelectorAll("[data-max]").forEach(btn => {
 
 document.querySelectorAll("[data-close]").forEach(btn => {
   btn.addEventListener("click", () => closeWindow(btn.dataset.close));
+});
+
+// XP Themes Switcher
+document.querySelectorAll(".theme-opt").forEach(btn => {
+  btn.addEventListener("click", () => {
+    xpAudio.click();
+    document.querySelectorAll(".theme-opt").forEach(b => b.classList.remove("active"));
+    btn.classList.add("active");
+    document.body.classList.remove("theme-olive", "theme-silver", "theme-noir");
+    if (btn.dataset.theme !== "default") {
+      document.body.classList.add("theme-" + btn.dataset.theme);
+    }
+  });
 });
 
 // Start Menu Toggle
@@ -1992,16 +2263,15 @@ $("startBalloonBtn").addEventListener("click", () => {
 });
 $("closeBalloon").addEventListener("click", () => $("xp-balloon").classList.remove("show"));
 
-// Show welcome balloon shortly after load
 setTimeout(() => showBalloon(), 1200);
 
 // Clippy Assistant
 const clippyPhrases = [
   "Похоже, ты проверяешь цифровую гигиену! Не забудь: ни один банк не просит код из SMS.",
   "Совет Скрепыша: длинная фраза из 3–4 случайных слов с цифрами надёжнее сложного короткого пароля.",
-  "Видишь QR-код на уличном объявлении? Всегда проверяй адрес сайта перед вводом любых данных!",
+  "Попробуй «Детектор фишинга» на Рабочем столе — научись отличать Красный флаг от Зелёного!",
   "В режиме FINAL BOSS может быть сразу несколько правильных вариантов ответа. Читай внимательно!",
-  "После завершения теста ты можешь сохранить отчёт прямо на Рабочий стол Windows XP!"
+  "В «Моём компьютере» можно сменить тему Windows XP на Оливковую, Серебристую или Royale Noir."
 ];
 let clippyIdx = 0;
 function sayClippy(customText) {
@@ -2043,16 +2313,16 @@ const defaultCheatSheet = `=== ПАМЯТКА ПО КИБЕРБЕЗОПАСНО�
    никогда не спрашивают одноразовые коды подтверждения.
 
 2. ВКЛЮЧИ ДВУХФАКТОРНУЮ АУТЕНТИФИКАЦИЮ (2FA)
-   Используй приложение-аутентификатор (TOTP) или облачный
-   пароль в мессенджерах.
+   Используй приложение-аутентификатор (TOTP), Passkey
+   или облачный пароль в мессенджерах.
 
 3. ПРАВИЛО «СРОЧНОСТИ»
    Если тебя торопят («осталось 5 минут», «счёт заблокируют»),
    это манипуляция. Положи трубку или закрой письмо.
 
-4. ПРОВЕРЯЙ АДРЕС САЙТА
+4. ПРОВЕРЯЙ АДРЕС САЙТА И РАСШИРЕНИЕ ФАЙЛОВ
    Значок замка (HTTPS) означает шифрование, но не честность
-   владельца сайта. Всегда сверяй буквы в домене.
+   сайта. Бойся файлов вида «Фото.jpg.exe» или «Видео.mp4.apk».
 
 5. ПУБЛИЧНЫЕ WI-FI И USB
    Не устанавливай сертификаты в кафе и не подключай телефон
@@ -2076,17 +2346,22 @@ function evaluatePassword(pw) {
     $("pwBar").style.width = "0%";
     $("pwVerdict").textContent = "Ожидание ввода...";
     $("pwTime").textContent = "";
+    $("pwTips").textContent = "";
     return;
   }
   let score = 0;
-  if (pw.length >= 8) score += 20;
+  const tips = [];
+  if (pw.length >= 8) score += 20; else tips.push("добавь длину от 12 символов");
   if (pw.length >= 12) score += 20;
   if (pw.length >= 16) score += 15;
   if (/[a-zа-я]/.test(pw)) score += 10;
-  if (/[A-ZА-Я]/.test(pw)) score += 12;
-  if (/[0-9]/.test(pw)) score += 11;
-  if (/[^a-zA-Zа-яА-Я0-9]/.test(pw)) score += 12;
-  if (/^(qwerty|12345|password|admin|ivan)/i.test(pw)) score = Math.min(score, 15);
+  if (/[A-ZА-Я]/.test(pw)) score += 12; else tips.push("добавь заглавные буквы");
+  if (/[0-9]/.test(pw)) score += 11; else tips.push("добавь цифры");
+  if (/[^a-zA-Zа-яА-Я0-9]/.test(pw)) score += 12; else tips.push("добавь спецсимвол (!@#$)");
+  if (/^(qwerty|12345|password|admin|ivan|user|test)/i.test(pw)) {
+    score = Math.min(score, 15);
+    tips.unshift("избегай словарных слов и шаблонов");
+  }
 
   score = Math.min(100, score);
   $("pwBar").style.width = score + "%";
@@ -2098,12 +2373,13 @@ function evaluatePassword(pw) {
   } else if (score < 70) {
     $("pwBar").style.background = "#f0a500";
     $("pwVerdict").textContent = "Средний пароль (Можно усилить)";
-    $("pwTime").textContent = "Добавь длину (14+ символов) и спецсимволы.";
+    $("pwTime").textContent = "Для важных аккаунтов лучше использовать 14+ символов.";
   } else {
     $("pwBar").style.background = "#229926";
     $("pwVerdict").textContent = "Надёжный пароль (Отличная стойкость)";
     $("pwTime").textContent = "Устойчив к перебору по словарям и грубой силе.";
   }
+  $("pwTips").textContent = tips.length ? "Совет: " + tips.join(", ") + "." : "Отличная структура пароля!";
 }
 $("pwTestInput").addEventListener("input", e => evaluatePassword(e.target.value));
 $("genPwBtn").addEventListener("click", () => {
@@ -2128,7 +2404,272 @@ $("emptyTrashBtn").addEventListener("click", () => {
 });
 
 /* =====================================================================
-   4. BLACK//ICE CYBERSECURITY QUIZ ENGINE
+   4. RED FLAG / GREEN FLAG PHISHING INSPECTOR
+   ===================================================================== */
+const inspectorCases = [
+  {
+    from: "Служба доставки <info@cdek-tracking-express24.ru>",
+    subj: "Посылка задержана на складе — оплатите 99 ₽ за хранение",
+    body: "Ваш заказ №88412 не может быть вручен. Для повторной доставки подтвердите банковскую карту по ссылке в течение 2 часов:",
+    link: "https://cdek-tracking-express24.ru/pay/card-verify",
+    isRed: true,
+    reason: "Красный флаг! Официальные службы доставки не просят вводить данные карты на сторонних доменах вроде cdek-tracking-express24.ru для оплаты мелких сборов."
+  },
+  {
+    from: "Портал Госуслуг <no-reply@gosuslugi.ru>",
+    subj: "Уведомление о входе в учётную запись",
+    body: "Выполнен вход в вашу учётную запись. Если это были не вы, самостоятельно откройте официальное приложение Госуслуг и смените пароль. Никому не сообщайте коды из SMS.",
+    link: "https://www.gosuslugi.ru/",
+    isRed: false,
+    reason: "Зелёный флаг! Настоящий домен gosuslugi.ru, нет просьбы срочно перейти по подозрительной ссылке или ввести код — письмо лишь информирует о входе."
+  },
+  {
+    from: "HR Отдел <hr-bonus@company-staff-info.com>",
+    subj: "Срочно: сверка графика отпусков и премий 2026",
+    body: "Всем сотрудникам необходимо до 18:00 скачать файл с распределением премий и включить макросы для просмотра таблицы.",
+    link: "Вложение: Premiya_2026_Spisok.docm",
+    isRed: true,
+    reason: "Красный флаг! Файл с расширением .docm содержит макросы, а просьба «включить макросы» — классический способ запуска вредоносного кода."
+  },
+  {
+    from: "GitHub <noreply@github.com>",
+    subj: "[GitHub] A new passkey was added to your account",
+    body: "Новый ключ доступа (Passkey) был добавлен в ваш аккаунт. Если вы не выполняли это действие, перейдите в настройки безопасности в своём профиле GitHub.",
+    link: "https://github.com/settings/security",
+    isRed: false,
+    reason: "Зелёный флаг! Подлинный домен github.com, стандартное системное уведомление безопасности без манипуляций и сбора данных."
+  },
+  {
+    from: "Техподдержка Telegram <security@telegram-verify-bot.org>",
+    subj: "Ваш аккаунт будет удалён за нарушение правил",
+    body: "На ваш профиль поступили жалобы. Чтобы отменить удаление, авторизуйтесь в боте верификации и введите код подтверждения:",
+    link: "https://telegram-verify-bot.org/auth",
+    isRed: true,
+    reason: "Красный флаг! Telegram не рассылает угрозы удаления со сторонних доменов и никогда не запрашивает код входа через веб-формы."
+  },
+  {
+    from: "Онлайн-кинотеатр <billing@kinopoisk.ru>",
+    subj: "Чек об оплате подписки Плюс",
+    body: "Спасибо за продление подписки. Электронный чек сформирован автоматически. Управлять подпиской можно в личном кабинете.",
+    link: "https://plus.yandex.ru/",
+    isRed: false,
+    reason: "Зелёный флаг! Официальный домен kinopoisk.ru / yandex.ru, информационный чек без ссылок на «возврат средств с вводом CVV»."
+  }
+];
+
+let inspDeck = [];
+let inspIdx = 0;
+let inspScore = 0;
+
+function initInspector() {
+  inspDeck = shuffle(inspectorCases);
+  inspIdx = 0;
+  inspScore = 0;
+  renderInspector();
+}
+
+function renderInspector() {
+  const item = inspDeck[inspIdx];
+  $("inspCounter").textContent = `${inspIdx + 1} / ${inspDeck.length} (Счёт: ${inspScore})`;
+  $("inspCard").innerHTML = `
+    <div class="email-meta">
+      <div><b>От:</b> ${escapeHtml(item.from)}</div>
+      <div><b>Тема:</b> ${escapeHtml(item.subj)}</div>
+    </div>
+    <div>${escapeHtml(item.body)}</div>
+    <div class="email-link-preview">${escapeHtml(item.link)}</div>
+  `;
+  $("inspFeedback").className = "xp-feedback hidden";
+  $("inspButtons").classList.remove("hidden");
+  $("inspNextRow").classList.add("hidden");
+}
+
+function escapeHtml(str) {
+  return str.replace(/[&<>"']/g, m => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[m]));
+}
+
+function answerInspector(userSaysRed) {
+  const item = inspDeck[inspIdx];
+  const ok = userSaysRed === item.isRed;
+  if (ok) {
+    inspScore++;
+    xpAudio.correct();
+  } else {
+    xpAudio.error();
+  }
+  $("inspCounter").textContent = `${inspIdx + 1} / ${inspDeck.length} (Счёт: ${inspScore})`;
+  const fb = $("inspFeedback");
+  fb.className = "xp-feedback" + (ok ? "" : " bad");
+  fb.innerHTML = `<div class="xp-feedback-head">${ok ? "✓ ТОЧНО В ЦЕЛЬ!" : "× ОШИБКА АНАЛИЗА"}</div><div>${escapeHtml(item.reason)}</div>`;
+  $("inspButtons").classList.add("hidden");
+  $("inspNextRow").classList.remove("hidden");
+  $("inspNextBtn").textContent = inspIdx === inspDeck.length - 1 ? "↻ Начать заново" : "Следующее сообщение →";
+}
+
+$("inspRedBtn").addEventListener("click", () => answerInspector(true));
+$("inspGreenBtn").addEventListener("click", () => answerInspector(false));
+$("inspNextBtn").addEventListener("click", () => {
+  xpAudio.click();
+  if (inspIdx < inspDeck.length - 1) {
+    inspIdx++;
+    renderInspector();
+  } else {
+    initInspector();
+  }
+});
+initInspector();
+
+/* =====================================================================
+   5. XP MINESWEEPER MINI-GAME ("САПЁР УГРОЗ")
+   ===================================================================== */
+const MINE_SIZE = 6;
+const MINE_COUNT = 6;
+let mineBoard = [];
+let mineGameOver = false;
+let flagMode = false;
+
+function initMines() {
+  mineGameOver = false;
+  $("mineResetBtn").textContent = "🙂";
+  $("mineStatus").textContent = "Открывай безопасные сектора. Цифра показывает, сколько троянов рядом.";
+  mineBoard = Array.from({ length: MINE_SIZE * MINE_SIZE }, () => ({
+    mine: false,
+    open: false,
+    flag: false,
+    count: 0
+  }));
+
+  let placed = 0;
+  while (placed < MINE_COUNT) {
+    const r = Math.floor(Math.random() * mineBoard.length);
+    if (!mineBoard[r].mine) {
+      mineBoard[r].mine = true;
+      placed++;
+    }
+  }
+
+  for (let i = 0; i < mineBoard.length; i++) {
+    if (mineBoard[i].mine) continue;
+    mineBoard[i].count = getNeighbors(i).filter(n => mineBoard[n].mine).length;
+  }
+  renderMines();
+}
+
+function getNeighbors(idx) {
+  const r = Math.floor(idx / MINE_SIZE);
+  const c = idx % MINE_SIZE;
+  const res = [];
+  for (let dr = -1; dr <= 1; dr++) {
+    for (let dc = -1; dc <= 1; dc++) {
+      if (dr === 0 && dc === 0) continue;
+      const nr = r + dr;
+      const nc = c + dc;
+      if (nr >= 0 && nr < MINE_SIZE && nc >= 0 && nc < MINE_SIZE) {
+        res.push(nr * MINE_SIZE + nc);
+      }
+    }
+  }
+  return res;
+}
+
+function revealCell(idx) {
+  const cell = mineBoard[idx];
+  if (cell.open || cell.flag) return;
+  cell.open = true;
+  if (cell.mine) {
+    mineGameOver = true;
+    xpAudio.error();
+    $("mineResetBtn").textContent = "😵";
+    $("mineStatus").textContent = "💥 Сработал троян! Нажми на смайлик, чтобы перезапустить сканирование.";
+    mineBoard.forEach(c => { if (c.mine) c.open = true; });
+    renderMines(idx);
+    return;
+  }
+  if (cell.count === 0) {
+    getNeighbors(idx).forEach(n => revealCell(n));
+  }
+}
+
+function toggleFlag(idx) {
+  const cell = mineBoard[idx];
+  if (cell.open || mineGameOver) return;
+  cell.flag = !cell.flag;
+  xpAudio.click();
+  renderMines();
+}
+
+function checkMineWin() {
+  const safeClosed = mineBoard.filter(c => !c.mine && !c.open).length;
+  if (safeClosed === 0 && !mineGameOver) {
+    mineGameOver = true;
+    xpAudio.correct();
+    $("mineResetBtn").textContent = "😎";
+    $("mineStatus").textContent = "🛡️ Сектор очищен! Все 6 угроз успешно изолированы.";
+    mineBoard.forEach(c => { if (c.mine) c.flag = true; });
+    renderMines();
+  }
+}
+
+function renderMines(boomIdx = -1) {
+  const flagsUsed = mineBoard.filter(c => c.flag).length;
+  $("mineLeft").textContent = String(Math.max(0, MINE_COUNT - flagsUsed)).padStart(3, "0");
+  const grid = $("mineGrid");
+  grid.replaceChildren();
+  const colors = ["", "#0000ff", "#008000", "#ff0000", "#000080", "#800000", "#008080"];
+
+  mineBoard.forEach((cell, i) => {
+    const btn = document.createElement("button");
+    btn.type = "button";
+    btn.className = "mine-cell";
+    if (cell.open) {
+      btn.classList.add("open");
+      if (cell.mine) {
+        if (i === boomIdx) btn.classList.add("boom");
+        btn.textContent = "💣";
+      } else if (cell.count > 0) {
+        btn.textContent = cell.count;
+        btn.style.color = colors[cell.count] || "#000";
+      }
+    } else if (cell.flag) {
+      btn.classList.add("flagged");
+      btn.textContent = "🚩";
+    }
+
+    btn.addEventListener("click", () => {
+      if (mineGameOver) return;
+      if (flagMode) {
+        toggleFlag(i);
+      } else {
+        if (cell.flag) return;
+        xpAudio.click();
+        revealCell(i);
+        renderMines(cell.mine ? i : -1);
+        checkMineWin();
+      }
+    });
+
+    btn.addEventListener("contextmenu", e => {
+      e.preventDefault();
+      toggleFlag(i);
+    });
+
+    grid.appendChild(btn);
+  });
+}
+
+$("mineResetBtn").addEventListener("click", () => {
+  xpAudio.click();
+  initMines();
+});
+$("mineModeBtn").addEventListener("click", () => {
+  xpAudio.click();
+  flagMode = !flagMode;
+  $("mineModeBtn").textContent = flagMode ? "Режим: 🚩 Флаг" : "Режим: 🔍 Открыть";
+});
+initMines();
+
+/* =====================================================================
+   6. BLACK//ICE CYBERSECURITY QUIZ ENGINE (WITH TRUE FISHER-YATES SHUFFLE)
    ===================================================================== */
 let mode = "training", pool = [], idx = 0, score = 0, answers = [], timerId = null, timeLeft = 20, locked = false, selected = [], streak = 0;
 let bestSessionRecord = null;
@@ -2151,6 +2692,35 @@ function shuffle(list) {
     [a[i], a[j]] = [a[j], a[i]];
   }
   return a;
+}
+
+/**
+ * Честное перемешивание вариантов ответа (алгоритм Фишера — Йетса)
+ * с точным пересчётом индексов правильных ответов перед показом вопроса.
+ */
+function prepareQuestionWithShuffledOptions(rawQ) {
+  const origCorrect = Array.isArray(rawQ.c) ? rawQ.c : [rawQ.c];
+  const paired = rawQ.a.map((text, originalIdx) => ({
+    text,
+    isCorrect: origCorrect.includes(originalIdx)
+  }));
+
+  for (let i = paired.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [paired[i], paired[j]] = [paired[j], paired[i]];
+  }
+
+  const newAnswers = paired.map(item => item.text);
+  const newCorrectIndices = [];
+  paired.forEach((item, newIdx) => {
+    if (item.isCorrect) newCorrectIndices.push(newIdx);
+  });
+
+  return {
+    ...rawQ,
+    a: newAnswers,
+    c: Array.isArray(rawQ.c) ? newCorrectIndices : newCorrectIndices[0]
+  };
 }
 
 function syncUserProfile() {
@@ -2186,7 +2756,9 @@ function startQuiz(m) {
   xpAudio.click();
   stopTimer();
   mode = m;
-  pool = shuffle(m === "boss" ? boss : standard);
+  // Перемешиваем и порядок вопросов, и варианты ответа внутри каждого вопроса
+  const rawPool = shuffle(m === "boss" ? boss : standard);
+  pool = rawPool.map(prepareQuestionWithShuffledOptions);
   idx = 0;
   score = 0;
   answers = [];
@@ -2289,7 +2861,10 @@ function submitSingle(choice, timeout) {
   const target = correctIndexes(q);
   const correct = target.length === 1 && choice === target[0];
   let points = correct ? 1 : 0;
-  if (correct && timed()) points += Math.floor(timeLeft / 10);
+  if (correct && timed()) {
+    points += Math.floor(timeLeft / 10);
+    if (mode === "champ" && streak >= 2) points += 1;
+  }
   score += points;
   answers.push({ choice, correct, points, timeout });
   finishQuestion(correct, points, timeout);
@@ -2366,7 +2941,7 @@ function finishQuiz() {
   stopTimer();
   const max = pool.reduce((n, q) => n + (q.multi ? 2 : (timed() ? 3 : 1)), 0);
   const correct = answers.filter(a => a.correct).length;
-  const pct = Math.round(score / max * 100);
+  const pct = Math.min(100, Math.round(score / max * 100));
   const nick = $("nickname").value.trim() || "Агент";
 
   let rank, desc;
@@ -2398,7 +2973,6 @@ function finishQuiz() {
   }
   updateSystemInfo();
 
-  // Build Review List & Text Report
   const review = $("review");
   review.replaceChildren();
   let reportLines = [
@@ -2456,13 +3030,11 @@ function finishQuiz() {
   }
 }
 
-// Save Report Icon directly to XP Desktop
 $("saveDesktopBtn").addEventListener("click", () => {
   xpAudio.correct();
   const nick = ($("nickname").value.trim() || "Agent").replace(/[^a-zA-Zа-яА-Я0-9_-]/g, "");
   const fileName = `Отчёт_${nick}.txt`;
 
-  // Avoid duplicate icons if clicked twice, update content instead
   let existing = document.getElementById("desk-report-icon");
   if (!existing) {
     existing = document.createElement("button");
@@ -2496,7 +3068,6 @@ $("saveDesktopBtn").addEventListener("click", () => {
   sayClippy(`Файл «${fileName}» создан на Рабочем столе! Нажми на него, чтобы открыть в Блокноте.`);
 });
 
-// Quiz Event Listeners
 document.querySelectorAll(".xp-mode-card").forEach(btn => {
   btn.addEventListener("click", () => startQuiz(btn.dataset.mode));
 });
@@ -2526,7 +3097,6 @@ $("reviewToggle").addEventListener("click", () => {
   $("reviewToggle").textContent = rev.classList.contains("hidden") ? "📋 Разобрать все кейсы" : "▲ Скрыть разбор";
 });
 
-// Keyboard shortcuts support
 document.addEventListener("keydown", event => {
   if ($("screen-game").classList.contains("hidden") || locked || event.altKey || event.ctrlKey || event.metaKey) return;
   const key = event.key.toLowerCase();
@@ -2535,8 +3105,6 @@ document.addEventListener("keydown", event => {
 });
 
 window.addEventListener("pagehide", stopTimer);
-
-// Initial taskbar render
 renderTaskbar();
 </script>
 </body>
