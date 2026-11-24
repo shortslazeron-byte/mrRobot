@@ -1,1597 +1,2201 @@
-<!-- ... existing code ... -->
+<!doctype html>
+<html lang="ru">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover">
-<meta name="theme-color" content="#0058EE">
-<title>BLACK//ICE.exe — Mobile Windows XP Security Lab</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<meta name="theme-color" content="#245edb">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<title>Windows XP — BLACK//ICE Security Lab</title>
 <style>
-:root {
-  --xp-blue-top: #0058EE;
-  --xp-blue-mid: #3593FF;
-  --xp-blue-bot: #0046D5;
-  --xp-border: #0054E3;
-  --xp-face: #ECE9D8;
-  --xp-face-light: #F7F5EE;
-  --xp-face-dark: #D4D0C8;
-  --xp-shadow: #808080;
-  --xp-select: #316AC5;
-  --xp-balloon: #FFFFE1;
-  --tap-min: 48px;
-  --safe-top: env(safe-area-inset-top, 0px);
-  --safe-bot: env(safe-area-inset-bottom, 0px);
-  --sans: Tahoma, 'Segoe UI', Verdana, Arial, sans-serif;
-  --mono: 'Lucida Console', 'Courier New', monospace;
-}
+  /* === WINDOWS XP LUNA THEME VARIABLES & RESET === */
+  :root {
+    --xp-blue-dark: #003399;
+    --xp-blue-main: #245edb;
+    --xp-blue-light: #3a93ff;
+    --xp-blue-inactive: #7a96df;
+    --xp-taskbar-top: #3168d5;
+    --xp-taskbar-bot: #1941a5;
+    --xp-start-top: #3c9c3c;
+    --xp-start-bot: #277327;
+    --xp-bg-beige: #ece9d8;
+    --xp-panel-light: #f5f4ea;
+    --xp-border-dark: #00138c;
+    --xp-border-mid: #7f9db9;
+    --xp-btn-face: #f3f3ee;
+    --xp-btn-shadow: #aca899;
+    --xp-orange-glow: #ffaa33;
+    --xp-green-bar: #37d23c;
+    --xp-red-alert: #d82c2c;
+    --font-xp: 'Tahoma', 'Verdana', 'Segoe UI', system-ui, -apple-system, sans-serif;
+    --font-mono: 'Lucida Console', 'Courier New', monospace;
+    --safe-top: env(safe-area-inset-top, 0px);
+    --safe-bottom: env(safe-area-inset-bottom, 0px);
+    --safe-left: env(safe-area-inset-left, 0px);
+    --safe-right: env(safe-area-inset-right, 0px);
+    --taskbar-h: 38px;
+  }
 
-* {
-  box-sizing: border-box;
-  -webkit-tap-highlight-color: transparent;
-}
+  * {
+    box-sizing: border-box;
+    -webkit-tap-highlight-color: transparent;
+    user-select: none;
+  }
 
-html, body {
-  margin: 0;
-  padding: 0;
-  min-height: 100dvh;
-  font-family: var(--sans);
-  font-size: 14px;
-  color: #000000;
-  background: #132A4A;
-  overflow-x: hidden;
-  user-select: none;
-}
+  input, textarea, .selectable {
+    user-select: text;
+  }
 
-body {
-  display: flex;
-  justify-content: center;
-  align-items: stretch;
-}
+  html, body {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100dvh;
+    overflow: hidden;
+    font-family: var(--font-xp);
+    font-size: 13px;
+    color: #000;
+    background: #1d64c8;
+  }
 
-/* ==========================================================================
-   MOBILE PHONE FRAME & BLISS WALLPAPER
-   ========================================================================== */
-.phone-shell {
-  position: relative;
-  width: 100%;
-  max-width: 430px;
-  min-height: 100dvh;
-  background: #3A6EA5;
-  overflow-x: hidden;
-  box-shadow: 0 0 40px rgba(0, 0, 0, 0.65);
-  display: flex;
-  flex-direction: column;
-}
+  /* === BLISS WALLPAPER (SVG + CSS) === */
+  #desktop {
+    position: fixed;
+    inset: 0;
+    width: 100%;
+    height: 100dvh;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    background: linear-gradient(180deg, #1b5ec7 0%, #4b94eb 46%, #88bcf6 60%, #49a12d 61%, #3c8c22 100%);
+  }
 
-.desktop-bg {
-  position: absolute;
-  inset: 0;
-  z-index: 0;
-  pointer-events: none;
-  background: linear-gradient(180deg, #1E63C6 0%, #4A94EB 40%, #8DC2F8 64%, #B9DCFB 76%);
-}
-.desktop-bg svg {
-  width: 100%;
-  height: 100%;
-  display: block;
-}
+  .bliss-svg {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 0;
+  }
 
-/* Top Mobile Status Bar */
-.mobile-statusbar {
-  position: sticky;
-  top: 0;
-  z-index: 40;
-  padding-top: var(--safe-top);
-  min-height: calc(26px + var(--safe-top));
-  padding-left: 10px;
-  padding-right: 10px;
-  background: rgba(9, 27, 68, 0.86);
-  backdrop-filter: blur(4px);
-  color: #FFFFFF;
-  font-size: 11px;
-  font-weight: bold;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 8px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.22);
-}
-.m-status-group {
-  display: flex;
-  align-items: center;
-  gap: 7px;
-}
-.m-signal-bars {
-  display: inline-flex;
-  align-items: flex-end;
-  gap: 1.5px;
-  height: 10px;
-}
-.m-signal-bars i {
-  display: block;
-  width: 2.5px;
-  background: #FFFFFF;
-}
-.m-signal-bars i:nth-child(1) { height: 4px; }
-.m-signal-bars i:nth-child(2) { height: 6px; }
-.m-signal-bars i:nth-child(3) { height: 8px; }
-.m-signal-bars i:nth-child(4) { height: 10px; }
+  /* Safe-area top status shield so notch never overlaps desktop icons */
+  .safe-top-spacer {
+    height: var(--safe-top);
+    width: 100%;
+    background: linear-gradient(180deg, rgba(0, 24, 72, 0.45) 0%, rgba(0, 24, 72, 0) 100%);
+    flex-shrink: 0;
+    z-index: 2;
+  }
 
-/* Mobile Shortcut Dock */
-.mobile-dock {
-  position: relative;
-  z-index: 5;
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 6px;
-  padding: 8px 8px 4px;
-}
-.d-icon {
-  min-height: 58px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
-  gap: 3px;
-  background: rgba(12, 34, 78, 0.34);
-  border: 1px solid rgba(255, 255, 255, 0.22);
-  border-radius: 5px;
-  padding: 5px 3px;
-  cursor: pointer;
-  color: #FFFFFF;
-  font-family: var(--sans);
-  font-size: 10.5px;
-  line-height: 1.15;
-  text-shadow: 1px 1px 2px #000;
-}
-.d-icon.selected {
-  background: rgba(49, 106, 197, 0.72);
-  border-color: #FFFF55;
-}
-.d-icon-label {
-  width: 100%;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  padding: 0 2px;
-}
+  /* === WORKSPACE & DESKTOP ICONS === */
+  #workspace {
+    position: relative;
+    flex: 1;
+    width: 100%;
+    padding-left: calc(10px + var(--safe-left));
+    padding-right: calc(10px + var(--safe-right));
+    padding-top: 8px;
+    padding-bottom: 8px;
+    overflow: hidden;
+    z-index: 1;
+  }
 
-/* ==========================================================================
-   MAIN MOBILE WORKSPACE & WINDOWS XP LUNA WINDOW
-   ========================================================================== */
-.workspace {
-  position: relative;
-  z-index: 6;
-  flex: 1;
-  padding: 6px 8px calc(62px + var(--safe-bot)) 8px;
-  display: flex;
-  flex-direction: column;
-}
+  .desktop-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(76px, 82px));
+    grid-auto-rows: min-content;
+    gap: 10px 6px;
+    align-content: start;
+    height: 100%;
+  }
 
-.xp-window {
-  width: 100%;
-  background: var(--xp-face);
-  border: 3px solid var(--xp-border);
-  border-top-left-radius: 9px;
-  border-top-right-radius: 9px;
-  box-shadow:
-    inset 1px 1px 0 #5C9DFF,
-    inset -1px -1px 0 #0038A8,
-    0 6px 18px rgba(0, 0, 0, 0.5);
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
-}
-.xp-window.minimized {
-  display: none;
-}
+  .desk-icon {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    padding: 6px 4px;
+    border-radius: 4px;
+    border: 1px solid transparent;
+    background: transparent;
+    color: #fff;
+    text-align: center;
+    cursor: pointer;
+    transition: background 0.12s;
+    min-height: 76px;
+  }
 
-@keyframes xpShake {
-  0%, 100% { transform: translateX(0); }
-  20% { transform: translateX(-5px); }
-  40% { transform: translateX(5px); }
-  60% { transform: translateX(-3px); }
-  80% { transform: translateX(3px); }
-}
-.xp-window.shake {
-  animation: xpShake 0.28s ease;
-}
+  .desk-icon:active, .desk-icon.selected {
+    background: rgba(11, 97, 255, 0.42);
+    border: 1px dotted rgba(255, 255, 255, 0.85);
+  }
 
-/* Luna Glossy Title Bar (Thumb-friendly controls) */
-.xp-titlebar {
-  min-height: 40px;
-  padding: 4px 6px 4px 10px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 6px;
-  background: linear-gradient(180deg,
-    #0997FF 0%,
-    #0053EE 12%,
-    #0050EE 45%,
-    #06F 90%,
-    #003DD7 100%);
-  color: #FFFFFF;
-  font-weight: bold;
-  font-size: 13px;
-  text-shadow: 1px 1px 1px #001B6B;
-}
-.xp-title-left {
-  display: flex;
-  align-items: center;
-  gap: 7px;
-  min-width: 0;
-}
-.xp-title-text {
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-.xp-win-btns {
-  display: flex;
-  align-items: center;
-  gap: 4px;
-  flex-shrink: 0;
-}
-.xp-cap-btn {
-  width: 34px;
-  height: 30px;
-  border: 1px solid #FFFFFF;
-  border-radius: 4px;
-  background: linear-gradient(180deg, #5298FF 0%, #1B64E0 55%, #1350C4 100%);
-  color: #FFFFFF;
-  font: bold 14px/1 var(--sans);
-  display: grid;
-  place-items: center;
-  cursor: pointer;
-  padding: 0;
-  box-shadow: inset 0 1px 0 rgba(255,255,255,0.45);
-}
-.xp-cap-btn:active { filter: brightness(0.88); }
-.xp-cap-btn.close {
-  background: linear-gradient(180deg, #F68D78 0%, #E04328 50%, #C52811 100%);
-}
+  .desk-icon svg {
+    width: 38px;
+    height: 38px;
+    filter: drop-shadow(1px 2px 2px rgba(0, 0, 0, 0.55));
+    margin-bottom: 4px;
+    flex-shrink: 0;
+  }
 
-/* Mobile Address Strip */
-.xp-addressbar {
-  background: #ECE9D8;
-  border-bottom: 1px solid #ACA899;
-  padding: 5px 8px;
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  font-size: 11px;
-  color: #333;
-}
-.xp-address-box {
-  flex: 1;
-  min-width: 0;
-  background: #FFFFFF;
-  border: 1px solid #7F9DB9;
-  padding: 4px 7px;
-  font-size: 11px;
-  color: #000000;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
+  .desk-icon span {
+    font-size: 11px;
+    line-height: 1.2;
+    text-shadow: 1px 1px 2px #000, 0 0 4px rgba(0, 0, 0, 0.9);
+    word-break: break-word;
+    max-width: 76px;
+    padding: 1px 3px;
+    border-radius: 2px;
+  }
 
-/* Window Content Area */
-.xp-body {
-  padding: 10px;
-  background: var(--xp-face);
-}
+  .desk-icon.selected span {
+    background: #0b61ff;
+  }
 
-.screen { display: none; }
-.screen.active { display: block; }
+  /* === WINDOWS XP LUNA WINDOW SYSTEM === */
+  .xp-window {
+    position: absolute;
+    top: 4px;
+    left: calc(6px + var(--safe-left));
+    right: calc(6px + var(--safe-right));
+    bottom: 6px;
+    max-width: 660px;
+    margin: 0 auto;
+    background: var(--xp-bg-beige);
+    border: 3px solid var(--xp-blue-main);
+    border-top-left-radius: 8px;
+    border-top-right-radius: 8px;
+    border-bottom-left-radius: 3px;
+    border-bottom-right-radius: 3px;
+    box-shadow: 0 8px 28px rgba(0, 0, 0, 0.52), inset 0 0 0 1px #7bb3ff;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    z-index: 10;
+    animation: xpWinOpen 0.16s cubic-bezier(0.2, 0.9, 0.3, 1);
+  }
 
-/* XP GroupBox */
-.xp-group {
-  border: 1px solid #C8C4B4;
-  border-radius: 5px;
-  padding: 10px;
-  margin: 0 0 10px 0;
-  background: #F4F3EE;
-  box-shadow: inset 1px 1px 0 #FFFFFF;
-}
-.xp-group legend {
-  color: #0046D5;
-  font-weight: bold;
-  font-size: 12px;
-  padding: 0 5px;
-}
+  .xp-window.maximized {
+    top: 0;
+    left: var(--safe-left);
+    right: var(--safe-right);
+    bottom: 0;
+    max-width: 100%;
+    border-radius: 0;
+    border-width: 2px;
+  }
 
-/* XP Banner Header */
-.xp-banner {
-  background: linear-gradient(90deg, #003399 0%, #245EDC 65%, #4A88F2 100%);
-  color: #FFFFFF;
-  padding: 11px 12px;
-  border: 1px solid #00277A;
-  border-radius: 3px;
-  margin-bottom: 10px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 10px;
-}
-.xp-banner h1 {
-  margin: 0 0 3px;
-  font-size: 18px;
-  font-weight: bold;
-  text-shadow: 1px 1px 2px rgba(0,0,0,0.65);
-}
-.xp-banner p {
-  margin: 0;
-  font-size: 12px;
-  color: #E6EEFF;
-  line-height: 1.38;
-}
+  .xp-window.minimized {
+    display: none !important;
+  }
 
-/* Telemetry Strip */
-.xp-stats-bar {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 6px;
-  margin-bottom: 10px;
-}
-.xp-sunken-card {
-  background: #FFFFFF;
-  border: 1px solid #7F9DB9;
-  border-radius: 2px;
-  padding: 6px 7px;
-  box-shadow: inset 1px 1px 2px rgba(0,0,0,0.12);
-}
-.xp-sunken-card span {
-  display: block;
-  font-size: 10px;
-  color: #555;
-}
-.xp-sunken-card strong {
-  display: block;
-  font-size: 12.5px;
-  color: #003399;
-  margin-top: 2px;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
+  .xp-window.inactive {
+    border-color: var(--xp-blue-inactive);
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.3);
+  }
 
-/* Mobile-first Input & 48px+ Buttons */
-.xp-input {
-  width: 100%;
-  min-height: var(--tap-min);
-  background: #FFFFFF;
-  border: 1px solid #7F9DB9;
-  border-radius: 3px;
-  padding: 10px 11px;
-  font-family: var(--sans);
-  font-size: 15px; /* prevents iOS zoom on focus */
-  color: #000000;
-  outline: none;
-  margin-bottom: 8px;
-}
-.xp-input:focus {
-  border-color: #0054E3;
-  box-shadow: inset 0 0 0 1px #7DB0FF;
-}
-.xp-input[aria-invalid="true"] {
-  border-color: #CC0000;
-  background: #FFF2F2;
-}
+  @keyframes xpWinOpen {
+    from { opacity: 0; transform: scale(0.95) translateY(8px); }
+    to { opacity: 1; transform: scale(1) translateY(0); }
+  }
 
-.xp-input-actions {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 8px;
-}
+  /* Glossy Luna Title Bar */
+  .xp-titlebar {
+    height: 30px;
+    flex-shrink: 0;
+    background: linear-gradient(180deg,
+      #0997ff 0%,
+      #0053ee 8%,
+      #0050ee 40%,
+      #06f 88%,
+      #06f 93%,
+      #005bff 95%,
+      #003dd7 100%);
+    padding: 0 5px 0 8px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 6px;
+    color: #fff;
+    font-weight: 700;
+    font-size: 12px;
+    text-shadow: 1px 1px 1px #0f1089;
+    cursor: pointer;
+  }
 
-.xp-btn {
-  min-height: var(--tap-min);
-  padding: 8px 12px;
-  font-family: var(--sans);
-  font-size: 13px;
-  color: #000000;
-  background: linear-gradient(180deg, #FFFFFF 0%, #F3F2EC 45%, #E4E1D5 90%, #D6D2C2 100%);
-  border: 1px solid #003C74;
-  border-radius: 4px;
-  box-shadow: inset 0 1px 0 #FFFFFF, 0 1px 2px rgba(0,0,0,0.14);
-  cursor: pointer;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 6px;
-}
-.xp-btn.compact {
-  min-height: 36px;
-  padding: 4px 10px;
-  font-size: 12px;
-}
-.xp-btn:active:not(:disabled) {
-  background: linear-gradient(180deg, #DCD9CC 0%, #ECE9D8 100%);
-  box-shadow: inset 1px 1px 3px rgba(0,0,0,0.28);
-}
-.xp-btn.primary {
-  font-weight: bold;
-  box-shadow: inset 0 0 0 1px #69A1FF, 0 1px 2px rgba(0,0,0,0.18);
-}
-.xp-btn:disabled {
-  color: #8D8D8D;
-  border-color: #9E9E9E;
-  background: #ECE9D8;
-  cursor: not-allowed;
-  box-shadow: none;
-}
-.xp-btn.full { width: 100%; }
+  .xp-window.inactive .xp-titlebar {
+    background: linear-gradient(180deg, #9db6eb 0%, #7a96df 15%, #7591d9 85%, #5d7cc9 100%);
+    color: #d8e4f8;
+    text-shadow: none;
+  }
 
-/* Mode Selection Stack for Thumb Taps */
-.modes-stack {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-.xp-mode-btn {
-  width: 100%;
-  min-height: 60px;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  text-align: left;
-  padding: 9px 11px;
-  background: #FFFFFF;
-  border: 1px solid #ACA899;
-  border-radius: 4px;
-  cursor: pointer;
-}
-.xp-mode-btn:active {
-  background: #316AC5;
-  color: #FFFFFF;
-}
-.xp-mode-btn:active small,
-.xp-mode-btn:active .xp-tag {
-  color: #FFFFFF;
-  border-color: #FFFFFF;
-}
-.xp-mode-copy { flex: 1; min-width: 0; }
-.xp-mode-copy b {
-  display: flex;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: 5px;
-  font-size: 13px;
-  color: #003399;
-  margin-bottom: 3px;
-}
-.xp-mode-btn:active .xp-mode-copy b { color: #FFFFFF; }
-.xp-tag {
-  font-size: 10px;
-  font-weight: normal;
-  padding: 1px 5px;
-  border-radius: 2px;
-  background: #ECE9D8;
-  border: 1px solid #ACA899;
-  color: #333;
-}
-.xp-mode-copy small {
-  display: block;
-  font-size: 11.5px;
-  color: #444;
-  line-height: 1.35;
-}
-.xp-mode-chevron {
-  font-size: 16px;
-  font-weight: bold;
-  color: #0046D5;
-  flex-shrink: 0;
-}
-.xp-mode-btn:active .xp-mode-chevron { color: #FFFFFF; }
+  .xp-title-left {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    min-width: 0;
+    overflow: hidden;
+  }
 
-/* ==========================================================================
-   QUIZ SCREEN (MOBILE THUMB-FRIENDLY)
-   ========================================================================== */
-.quiz-header-bar {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 8px;
-  margin-bottom: 7px;
-  font-size: 12px;
-}
-.quiz-header-bar strong { color: #003399; font-size: 13px; }
+  .xp-title-left svg {
+    width: 16px;
+    height: 16px;
+    flex-shrink: 0;
+  }
 
-.xp-progress-track {
-  height: 16px;
-  background: #FFFFFF;
-  border: 1px solid #686868;
-  border-radius: 3px;
-  padding: 2px;
-  margin-bottom: 8px;
-  box-shadow: inset 1px 1px 2px rgba(0,0,0,0.2);
-}
-.xp-progress-fill {
-  height: 100%;
-  width: 0%;
-  background: repeating-linear-gradient(
-    90deg,
-    #28D028 0px,
-    #28D028 8px,
-    #FFFFFF 8px,
-    #FFFFFF 10px
-  );
-  transition: width 0.25s ease;
-}
+  .xp-title-text {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
 
-.case-meta-strip {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 6px;
-  background: #DFDDD0;
-  border: 1px solid #ACA899;
-  border-radius: 3px;
-  padding: 5px 8px;
-  margin-bottom: 9px;
-  font-size: 11px;
-}
-.timer-badge {
-  background: #000000;
-  color: #00FF00;
-  font-family: var(--mono);
-  font-weight: bold;
-  font-size: 12px;
-  padding: 3px 8px;
-  border-radius: 2px;
-  flex-shrink: 0;
-}
-.timer-badge.urgent {
-  color: #FF3333;
-  animation: blinkXp 0.5s infinite alternate;
-}
-@keyframes blinkXp { to { opacity: 0.4; } }
+  .xp-controls {
+    display: flex;
+    align-items: center;
+    gap: 3px;
+    flex-shrink: 0;
+  }
 
-.question-title {
-  font-size: 15px;
-  font-weight: bold;
-  line-height: 1.4;
-  color: #000000;
-  margin: 0 0 9px;
-}
+  .xp-ctrl-btn {
+    width: 24px;
+    height: 22px;
+    border-radius: 3px;
+    border: 1px solid #fff;
+    background: linear-gradient(180deg, #3c8dff 0%, #1559d6 50%, #0b44b8 100%);
+    color: #fff;
+    font-weight: 900;
+    font-size: 12px;
+    line-height: 1;
+    display: grid;
+    place-items: center;
+    padding: 0;
+    cursor: pointer;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.55);
+  }
 
-/* Evidence Box */
-.xp-notepad {
-  border: 1px solid #7F9DB9;
-  border-radius: 3px;
-  background: #FFFFFF;
-  margin-bottom: 9px;
-  overflow: hidden;
-}
-.xp-notepad-bar {
-  background: #ECE9D8;
-  border-bottom: 1px solid #ACA899;
-  padding: 5px 8px;
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: space-between;
-  align-items: center;
-  gap: 6px;
-  font-size: 11px;
-  font-weight: bold;
-  color: #333;
-}
-.xp-notepad-code {
-  margin: 0;
-  padding: 9px 10px;
-  font-family: var(--mono);
-  font-size: 11.5px;
-  line-height: 1.48;
-  color: #000000;
-  background: #FFFFFF;
-  white-space: pre-wrap;
-  word-break: break-word;
-  max-height: 170px;
-  overflow-y: auto;
-  user-select: text;
-}
-.xp-inspector-out {
-  background: #FFFFE1;
-  border-top: 1px solid #ACA899;
-  padding: 8px 10px;
-  font-size: 12px;
-  line-height: 1.42;
-  color: #000000;
-}
-.xp-inspector-out strong {
-  display: block;
-  color: #003399;
-  margin-bottom: 3px;
-}
+  .xp-ctrl-btn:active {
+    filter: brightness(0.85);
+    transform: translateY(1px);
+  }
 
-.xp-balloon-inline {
-  background: var(--xp-balloon);
-  border: 1px solid #000000;
-  border-radius: 6px;
-  padding: 8px 10px;
-  margin-bottom: 9px;
-  font-size: 12px;
-  line-height: 1.4;
-  box-shadow: 2px 2px 0 rgba(0,0,0,0.2);
-}
+  .xp-ctrl-btn.close {
+    background: linear-gradient(180deg, #f37d64 0%, #d8391d 50%, #b8230b 100%);
+  }
 
-.quiz-quick-tools {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 8px;
-  margin-bottom: 9px;
-}
-.quiz-quick-tools span {
-  font-size: 11.5px;
-  color: #444;
-  line-height: 1.3;
-}
+  /* Classic Menu Strip & Address Bar inside Window */
+  .xp-menubar {
+    background: #ece9d8;
+    border-bottom: 1px solid #d4d0c8;
+    padding: 3px 8px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 11px;
+    color: #222;
+    flex-shrink: 0;
+  }
 
-/* Large Touch Answer Rows */
-.answers-list {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-.xp-answer {
-  width: 100%;
-  min-height: 52px;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  text-align: left;
-  padding: 9px 10px;
-  background: #FFFFFF;
-  border: 1px solid #ACA899;
-  border-radius: 4px;
-  font-family: var(--sans);
-  font-size: 13px;
-  line-height: 1.38;
-  color: #000000;
-  cursor: pointer;
-}
-.xp-answer:active:not(:disabled) {
-  background: #EBF3FD;
-  border-color: #316AC5;
-}
-.xp-answer.selected {
-  background: #D8E8FF;
-  border-color: #0054E3;
-  font-weight: bold;
-}
-.xp-answer.correct {
-  background: #DFF6DD;
-  border-color: #107C10;
-}
-.xp-answer.wrong {
-  background: #FDE7E9;
-  border-color: #C50F1F;
-}
-.xp-answer:disabled { opacity: 1; cursor: default; }
+  .xp-menu-items {
+    display: flex;
+    gap: 10px;
+  }
 
-.xp-marker {
-  flex-shrink: 0;
-  min-width: 28px;
-  text-align: center;
-  font-family: var(--mono);
-  font-weight: bold;
-  font-size: 12px;
-  padding: 3px 5px;
-  border-radius: 2px;
-  background: #ECE9D8;
-  border: 1px solid #7F9DB9;
-  color: #003399;
-}
-.xp-answer.correct .xp-marker { background: #107C10; color: #FFF; border-color: #0B5A0B; }
-.xp-answer.wrong .xp-marker { background: #C50F1F; color: #FFF; border-color: #8E0B16; }
+  .xp-menu-items span {
+    padding: 2px 4px;
+    border-radius: 2px;
+    cursor: pointer;
+  }
 
-/* XP System Dialog Feedback Box */
-.xp-dialog-feedback {
-  margin-top: 10px;
-  border: 2px solid #0054E3;
-  border-radius: 6px 6px 2px 2px;
-  background: #ECE9D8;
-  box-shadow: 2px 3px 8px rgba(0,0,0,0.22);
-}
-.xp-dialog-feedback.bad { border-color: #C50F1F; }
-.xp-dialog-head {
-  padding: 5px 9px;
-  background: linear-gradient(180deg, #0997FF 0%, #0053EE 100%);
-  color: #FFFFFF;
-  font-weight: bold;
-  font-size: 12px;
-}
-.xp-dialog-feedback.bad .xp-dialog-head {
-  background: linear-gradient(180deg, #F06449 0%, #C50F1F 100%);
-}
-.xp-dialog-body {
-  padding: 10px;
-  display: flex;
-  align-items: flex-start;
-  gap: 9px;
-  font-size: 12.5px;
-  line-height: 1.42;
-}
+  .xp-menu-items span:active {
+    background: #316ac5;
+    color: #fff;
+  }
 
-.quiz-footer-btns {
-  display: grid;
-  grid-template-columns: 1fr 1.6fr;
-  gap: 8px;
-  margin-top: 12px;
-  padding-top: 10px;
-  border-top: 1px solid #ACA899;
-}
-.quiz-footer-btns .single-action {
-  grid-column: 1 / -1;
-}
+  .xp-addressbar {
+    background: #ece9d8;
+    border-bottom: 1px solid #aca899;
+    padding: 4px 8px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 11px;
+    flex-shrink: 0;
+  }
 
-/* Results Screen */
-.result-summary-box {
-  background: #FFFFFF;
-  border: 1px solid #7F9DB9;
-  border-radius: 3px;
-  padding: 10px;
-  margin-bottom: 10px;
-}
-.result-big-score {
-  font-size: 30px;
-  font-weight: bold;
-  color: #0046D5;
-  margin: 2px 0;
-}
-.dossier-box {
-  width: 100%;
-  background: #FFFFFF;
-  border: 1px solid #7F9DB9;
-  border-radius: 2px;
-  padding: 8px;
-  font-family: var(--mono);
-  font-size: 11px;
-  line-height: 1.45;
-  white-space: pre-wrap;
-  word-break: break-word;
-  margin-bottom: 8px;
-  user-select: text;
-}
-.result-btns-stack {
-  display: flex;
-  flex-direction: column;
-  gap: 7px;
-}
-.review-list {
-  margin-top: 10px;
-  max-height: 340px;
-  overflow-y: auto;
-  border: 1px solid #7F9DB9;
-  border-radius: 3px;
-  background: #FFFFFF;
-  padding: 8px;
-}
-.review-card {
-  border-bottom: 1px solid #D4D0C8;
-  padding: 8px 4px;
-  font-size: 12px;
-  line-height: 1.4;
-}
-.review-card:last-child { border-bottom: none; }
+  .xp-address-label {
+    color: #555;
+    flex-shrink: 0;
+  }
 
-.hidden { display: none !important; }
+  .xp-address-box {
+    flex: 1;
+    background: #fff;
+    border: 1px solid #7f9db9;
+    padding: 3px 6px;
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: #0b2c6b;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
 
-/* ==========================================================================
-   MOBILE TASKBAR, START MENU & BALLOON
-   ========================================================================== */
-.xp-taskbar {
-  position: fixed;
-  left: 50%;
-  transform: translateX(-50%);
-  bottom: 0;
-  width: 100%;
-  max-width: 430px;
-  min-height: calc(44px + var(--safe-bot));
-  padding-bottom: var(--safe-bot);
-  z-index: 60;
-  display: flex;
-  align-items: stretch;
-  justify-content: space-between;
-  background: linear-gradient(180deg,
-    #3168D5 0%,
-    #4993E6 9%,
-    #245EDC 18%,
-    #245EDC 92%,
-    #1941A5 100%);
-  border-top: 1px solid #69A1FF;
-}
+  /* Window Content Area */
+  .xp-body {
+    flex: 1;
+    overflow-y: auto;
+    overflow-x: hidden;
+    -webkit-overflow-scrolling: touch;
+    padding: 12px;
+    background: var(--xp-bg-beige);
+  }
 
-.xp-start-btn {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  padding: 0 14px 0 11px;
-  border: none;
-  border-top-right-radius: 12px;
-  border-bottom-right-radius: 12px;
-  background: linear-gradient(180deg,
-    #63C463 0%,
-    #389B38 14%,
-    #318D31 50%,
-    #297B29 90%,
-    #1E5E1E 100%);
-  color: #FFFFFF;
-  font-family: var(--sans);
-  font-style: italic;
-  font-weight: bold;
-  font-size: 15px;
-  text-shadow: 1px 1px 2px #134413;
-  box-shadow: inset -1px 0 2px rgba(0,0,0,0.35), 2px 0 5px rgba(0,0,0,0.35);
-  cursor: pointer;
-  flex-shrink: 0;
-}
-.xp-start-btn.open {
-  background: linear-gradient(180deg, #256B25 0%, #389B38 100%);
-  box-shadow: inset 2px 2px 4px rgba(0,0,0,0.5);
-}
+  .xp-body.notepad-mode {
+    background: #fff;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+  }
 
-.xp-tasks {
-  flex: 1;
-  min-width: 0;
-  display: flex;
-  align-items: center;
-  padding: 4px 6px;
-}
-.xp-task-tab {
-  width: 100%;
-  height: 34px;
-  padding: 0 8px;
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  background: linear-gradient(180deg, #3C81F3 0%, #2260D5 100%);
-  border: 1px solid #1644A8;
-  border-radius: 4px;
-  color: #FFFFFF;
-  font-size: 11.5px;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  cursor: pointer;
-}
-.xp-task-tab.active-tab {
-  background: linear-gradient(180deg, #1947A6 0%, #1E54BE 100%);
-  box-shadow: inset 1px 1px 3px rgba(0,0,0,0.55);
-  font-weight: bold;
-}
-.xp-task-tab span {
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
+  /* === CLASSIC XP UI COMPONENTS === */
+  .xp-groupbox {
+    border: 1px solid #d0d0bf;
+    border-radius: 4px;
+    background: var(--xp-panel-light);
+    padding: 12px 10px 10px;
+    margin-bottom: 10px;
+    position: relative;
+    box-shadow: inset 1px 1px 0 #fff;
+  }
 
-.xp-tray {
-  display: flex;
-  align-items: center;
-  gap: 4px;
-  padding: 0 8px;
-  background: linear-gradient(180deg,
-    #16A5F5 0%,
-    #1290E9 15%,
-    #0E7AD1 88%,
-    #0B63B2 100%);
-  border-left: 1px solid #095399;
-  color: #FFFFFF;
-  font-size: 12px;
-  font-weight: bold;
-  flex-shrink: 0;
-}
-.tray-btn {
-  width: 34px;
-  height: 34px;
-  background: transparent;
-  border: none;
-  color: #FFFFFF;
-  display: grid;
-  place-items: center;
-  cursor: pointer;
-}
+  .xp-group-title {
+    font-size: 11px;
+    font-weight: 700;
+    color: #003399;
+    margin: 0 0 8px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
 
-.xp-balloon-popup {
-  position: fixed;
-  left: 50%;
-  transform: translateX(-50%);
-  bottom: calc(52px + var(--safe-bot));
-  z-index: 75;
-  width: min(390px, calc(100vw - 20px));
-  background: var(--xp-balloon);
-  border: 1px solid #000000;
-  border-radius: 7px;
-  padding: 10px 12px;
-  box-shadow: 0 4px 14px rgba(0,0,0,0.4);
-  font-size: 12px;
-  line-height: 1.4;
-  color: #000000;
-}
-.xp-balloon-top {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  font-weight: bold;
-  font-size: 12.5px;
-  margin-bottom: 4px;
-}
-.xp-balloon-close {
-  width: 28px;
-  height: 28px;
-  border: 1px solid #ACA899;
-  border-radius: 3px;
-  background: #ECE9D8;
-  font-size: 14px;
-  font-weight: bold;
-  line-height: 1;
-  padding: 0;
-  cursor: pointer;
-}
+  .xp-input {
+    width: 100%;
+    min-height: 38px;
+    background: #fff;
+    border: 1px solid #7f9db9;
+    box-shadow: inset 1px 1px 2px rgba(0, 0, 0, 0.14);
+    padding: 7px 10px;
+    font-family: var(--font-xp);
+    font-size: 15px;
+    color: #000;
+    border-radius: 0;
+    outline: none;
+  }
 
-/* Single-Column Mobile Start Menu */
-.xp-start-menu {
-  position: fixed;
-  left: 50%;
-  transform: translateX(-50%);
-  bottom: calc(44px + var(--safe-bot));
-  z-index: 70;
-  width: min(414px, calc(100vw - 12px));
-  max-height: 78dvh;
-  overflow-y: auto;
-  background: #FFFFFF;
-  border: 2px solid #0054E3;
-  border-top-left-radius: 9px;
-  border-top-right-radius: 9px;
-  box-shadow: 0 -4px 20px rgba(0,0,0,0.5);
-}
-.start-header {
-  background: linear-gradient(180deg, #1665D8 0%, #3E8DF3 50%, #1665D8 100%);
-  padding: 9px 12px;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  color: #FFFFFF;
-  font-weight: bold;
-  font-size: 14px;
-  text-shadow: 1px 1px 1px #002366;
-}
-.start-avatar {
-  width: 38px;
-  height: 38px;
-  border: 2px solid #FFFFFF;
-  border-radius: 5px;
-  background: #ECE9D8;
-  display: grid;
-  place-items: center;
-  flex-shrink: 0;
-}
-.start-col-single {
-  padding: 6px;
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-}
-.start-section-lbl {
-  font-size: 10.5px;
-  font-weight: bold;
-  color: #0046D5;
-  padding: 4px 8px 1px;
-}
-.start-item {
-  width: 100%;
-  min-height: var(--tap-min);
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 8px;
-  padding: 8px 10px;
-  border: 1px solid #E2E6EC;
-  border-radius: 4px;
-  background: #F9FAFC;
-  text-align: left;
-  font-size: 13px;
-  color: #000000;
-  cursor: pointer;
-}
-.start-item.sys-item {
-  background: #E8F1FC;
-  border-color: #B9D4F5;
-}
-.start-item:active {
-  background: #316AC5;
-  color: #FFFFFF;
-}
-.start-footer {
-  background: linear-gradient(180deg, #3E8DF3 0%, #1665D8 100%);
-  padding: 6px 10px;
-  display: flex;
-  justify-content: flex-end;
-}
-.start-power-btn {
-  min-height: 40px;
-  background: transparent;
-  border: 1px solid rgba(255,255,255,0.35);
-  border-radius: 4px;
-  color: #FFFFFF;
-  font-size: 12.5px;
-  font-weight: bold;
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  padding: 0 12px;
-  cursor: pointer;
-}
+  .xp-input:focus {
+    border-color: #245edb;
+    box-shadow: inset 1px 1px 2px rgba(0, 0, 0, 0.14), 0 0 0 2px rgba(36, 94, 219, 0.25);
+  }
 
-/* ==========================================================================
-   MOBILE MODALS (CMD.EXE & MESSAGE BOX)
-   ========================================================================== */
-.xp-modal-backdrop {
-  position: fixed;
-  inset: 0;
-  z-index: 80;
-  background: rgba(0, 0, 0, 0.5);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 10px;
-}
-.cmd-window {
-  width: 100%;
-  max-width: 410px;
-  background: #000000;
-  border: 3px solid #0054E3;
-  border-top-left-radius: 8px;
-  border-top-right-radius: 8px;
-  box-shadow: 0 8px 24px rgba(0,0,0,0.75);
-  display: flex;
-  flex-direction: column;
-}
-.cmd-body {
-  padding: 10px;
-  font-family: var(--mono);
-  font-size: 12px;
-  line-height: 1.45;
-  color: #C0C0C0;
-  min-height: 190px;
-  max-height: 45dvh;
-  overflow-y: auto;
-  white-space: pre-wrap;
-  user-select: text;
-}
-.cmd-input-line {
-  display: flex;
-  align-items: center;
-  padding: 6px 8px 8px;
-  background: #111111;
-  border-top: 1px solid #333333;
-  font-family: var(--mono);
-  font-size: 12px;
-  color: #55FF55;
-  gap: 6px;
-}
-.cmd-input {
-  flex: 1;
-  min-width: 0;
-  min-height: 42px;
-  background: #000000;
-  border: 1px solid #444;
-  border-radius: 3px;
-  padding: 6px 8px;
-  color: #FFFFFF;
-  font-family: var(--mono);
-  font-size: 14px;
-  outline: none;
-}
+  .xp-input.invalid {
+    border-color: #d82c2c;
+    background: #fff3f3;
+  }
 
-.msgbox-window {
-  width: 100%;
-  max-width: 390px;
-  background: var(--xp-face);
-  border: 3px solid #0054E3;
-  border-top-left-radius: 8px;
-  border-top-right-radius: 8px;
-  box-shadow: 0 8px 24px rgba(0,0,0,0.7);
-}
-.msgbox-content {
-  padding: 14px;
-  display: flex;
-  align-items: flex-start;
-  gap: 10px;
-  font-size: 13px;
-  line-height: 1.45;
-}
-.msgbox-actions {
-  padding: 0 14px 14px;
-}
+  /* Classic XP Push Button */
+  .xp-btn {
+    min-height: 38px;
+    padding: 7px 14px;
+    font-family: var(--font-xp);
+    font-size: 12px;
+    font-weight: 600;
+    color: #000;
+    background: linear-gradient(180deg, #ffffff 0%, #f3f3ee 48%, #e4e2d5 100%);
+    border: 1px solid #003c74;
+    border-radius: 3px;
+    box-shadow: inset 0 -1px 2px rgba(0, 0, 0, 0.15), inset 0 1px 0 #fff;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    transition: box-shadow 0.1s;
+  }
 
-/* ==========================================================================
-   BSOD EASTER EGG SCREEN
-   ========================================================================== */
-.bsod-screen {
-  position: fixed;
-  inset: 0;
-  z-index: 999;
-  background: #0000AA;
-  color: #FFFFFF;
-  font-family: var(--mono);
-  font-size: 13px;
-  line-height: 1.5;
-  padding: calc(20px + var(--safe-top)) 16px calc(20px + var(--safe-bot)) 16px;
-  overflow-y: auto;
-  cursor: pointer;
-}
-.bsod-screen p { margin: 0 0 14px; }
+  .xp-btn:hover:not(:disabled) {
+    box-shadow: inset 0 0 0 2px #ffaa33, 0 1px 2px rgba(0, 0, 0, 0.15);
+  }
+
+  .xp-btn:active:not(:disabled) {
+    background: linear-gradient(180deg, #dcd9cb 0%, #ece9d8 100%);
+    transform: translateY(1px);
+  }
+
+  .xp-btn:disabled {
+    color: #8d8b80;
+    border-color: #aca899;
+    background: #f0efe6;
+    cursor: not-allowed;
+  }
+
+  .xp-btn.primary {
+    border-width: 2px;
+    border-color: #003c74;
+    box-shadow: inset 0 0 0 1px #6da6ff;
+  }
+
+  .xp-btn.full {
+    width: 100%;
+  }
+
+  /* XP Segmented Progress Bar */
+  .xp-progress-wrap {
+    height: 18px;
+    background: #fff;
+    border: 1px solid #686868;
+    border-radius: 3px;
+    padding: 2px;
+    box-shadow: inset 1px 1px 2px rgba(0, 0, 0, 0.22);
+    overflow: hidden;
+  }
+
+  .xp-progress-fill {
+    height: 100%;
+    width: 0%;
+    background: repeating-linear-gradient(
+      90deg,
+      #28d12d 0px,
+      #4ef053 7px,
+      #1ca820 9px,
+      transparent 9px,
+      transparent 11px
+    );
+    transition: width 0.25s ease;
+  }
+
+  /* === QUIZ SPECIFIC STYLES IN XP === */
+  .xp-banner {
+    background: linear-gradient(135deg, #003399 0%, #245edb 55%, #3a93ff 100%);
+    color: #fff;
+    border-radius: 4px;
+    padding: 12px;
+    margin-bottom: 10px;
+    border: 1px solid #002266;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.35);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .xp-banner-badge {
+    display: inline-block;
+    background: #ffcc00;
+    color: #000;
+    font-size: 10px;
+    font-weight: 800;
+    padding: 2px 6px;
+    border-radius: 2px;
+    margin-bottom: 6px;
+    letter-spacing: 0.4px;
+  }
+
+  .xp-banner h1 {
+    margin: 0 0 5px;
+    font-size: 20px;
+    line-height: 1.15;
+    letter-spacing: -0.3px;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+  }
+
+  .xp-banner p {
+    margin: 0;
+    font-size: 12px;
+    line-height: 1.45;
+    color: #e4eeff;
+  }
+
+  .mode-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+
+  @media (min-width: 460px) {
+    .mode-grid {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+
+  .xp-mode-card {
+    text-align: left;
+    padding: 10px;
+    background: linear-gradient(180deg, #ffffff 0%, #f1efe4 100%);
+    border: 1px solid #7f9db9;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
+    min-height: 62px;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.08);
+    transition: border-color 0.12s, box-shadow 0.12s;
+  }
+
+  .xp-mode-card:hover, .xp-mode-card:active {
+    border-color: #245edb;
+    box-shadow: inset 0 0 0 2px #ffaa33;
+    background: #fffdf6;
+  }
+
+  .mode-num {
+    width: 32px;
+    height: 32px;
+    border-radius: 4px;
+    background: linear-gradient(180deg, #3a93ff 0%, #004ec4 100%);
+    color: #fff;
+    font-weight: 800;
+    font-size: 12px;
+    display: grid;
+    place-items: center;
+    flex-shrink: 0;
+    border: 1px solid #002b73;
+  }
+
+  .mode-info b {
+    display: block;
+    font-size: 12px;
+    color: #003399;
+    margin-bottom: 2px;
+  }
+
+  .mode-info small {
+    display: block;
+    font-size: 11px;
+    color: #444;
+    line-height: 1.3;
+  }
+
+  /* Quiz Question Screen */
+  .quiz-hud {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: #dfe4f2;
+    border: 1px solid #9db0d8;
+    padding: 6px 8px;
+    border-radius: 3px;
+    margin-bottom: 8px;
+    font-size: 11px;
+    font-weight: 700;
+    color: #002b73;
+  }
+
+  .timer-pill {
+    background: #fff;
+    border: 1px solid #7f9db9;
+    padding: 2px 7px;
+    font-family: var(--font-mono);
+    font-size: 12px;
+    color: #003399;
+    border-radius: 2px;
+  }
+
+  .timer-pill.urgent {
+    background: #ffe0e0;
+    border-color: #d82c2c;
+    color: #c40000;
+    animation: xpBlink 0.45s infinite alternate;
+  }
+
+  @keyframes xpBlink {
+    to { opacity: 0.45; }
+  }
+
+  .q-title {
+    font-size: 15px;
+    font-weight: 700;
+    line-height: 1.4;
+    color: #111;
+    margin: 6px 0 6px;
+  }
+
+  .q-hint {
+    font-size: 11px;
+    color: #555;
+    margin: 0 0 10px;
+  }
+
+  .xp-answers {
+    display: grid;
+    gap: 7px;
+  }
+
+  .xp-ans-btn {
+    width: 100%;
+    min-height: 46px;
+    padding: 9px 10px;
+    text-align: left;
+    background: #fff;
+    border: 1px solid #7f9db9;
+    border-radius: 3px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-family: var(--font-xp);
+    font-size: 12.5px;
+    line-height: 1.38;
+    color: #111;
+    cursor: pointer;
+    box-shadow: 0 1px 1px rgba(0, 0, 0, 0.05);
+  }
+
+  .xp-ans-btn:hover:not(:disabled) {
+    border-color: #245edb;
+    background: #f2f7ff;
+  }
+
+  .xp-ans-btn.selected {
+    background: #e3eeff;
+    border: 2px solid #245edb;
+  }
+
+  .xp-ans-btn.correct {
+    background: #e6f9e6;
+    border: 2px solid #229926;
+    color: #0d4b0f;
+  }
+
+  .xp-ans-btn.wrong {
+    background: #ffebeb;
+    border: 2px solid #d82c2c;
+    color: #7d0c0c;
+  }
+
+  .xp-ans-btn:disabled {
+    cursor: default;
+  }
+
+  .xp-marker {
+    width: 22px;
+    height: 22px;
+    flex-shrink: 0;
+    border: 1px solid #1c5180;
+    background: linear-gradient(180deg, #fff 0%, #e4e4e4 100%);
+    display: grid;
+    place-items: center;
+    font-weight: 700;
+    font-size: 11px;
+    color: #003399;
+    border-radius: 2px;
+  }
+
+  .xp-ans-btn.radio .xp-marker {
+    border-radius: 50%;
+  }
+
+  .xp-ans-btn.selected .xp-marker {
+    background: #245edb;
+    color: #fff;
+  }
+
+  .xp-ans-btn.correct .xp-marker {
+    background: #229926;
+    border-color: #166b19;
+    color: #fff;
+  }
+
+  .xp-ans-btn.wrong .xp-marker {
+    background: #d82c2c;
+    border-color: #961616;
+    color: #fff;
+  }
+
+  /* XP Alert Feedback Box */
+  .xp-feedback {
+    margin-top: 10px;
+    padding: 10px;
+    border-radius: 4px;
+    border: 1px solid #229926;
+    background: #eefbee;
+    font-size: 12px;
+    line-height: 1.45;
+    color: #143d16;
+  }
+
+  .xp-feedback.bad {
+    border-color: #d82c2c;
+    background: #fff0f0;
+    color: #5c1010;
+  }
+
+  .xp-feedback-head {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-weight: 700;
+    margin-bottom: 4px;
+    font-size: 12px;
+  }
+
+  .xp-actions-row {
+    display: flex;
+    gap: 8px;
+    margin-top: 12px;
+  }
+
+  .xp-actions-row .xp-btn {
+    flex: 1;
+  }
+
+  /* Results Certificate */
+  .xp-cert {
+    background: #fff;
+    border: 2px solid #245edb;
+    border-radius: 4px;
+    padding: 12px;
+    text-align: center;
+    margin-bottom: 10px;
+    box-shadow: inset 0 0 0 2px #d9e6ff;
+  }
+
+  .cert-score {
+    font-family: var(--font-mono);
+    font-size: 36px;
+    font-weight: 800;
+    color: #003399;
+    margin: 4px 0;
+  }
+
+  .cert-rank {
+    display: inline-block;
+    background: #245edb;
+    color: #fff;
+    font-weight: 700;
+    font-size: 13px;
+    padding: 4px 12px;
+    border-radius: 3px;
+    margin-bottom: 6px;
+  }
+
+  .stats-trio {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 6px;
+    margin-bottom: 10px;
+  }
+
+  .stat-cell {
+    background: #fff;
+    border: 1px solid #7f9db9;
+    padding: 8px 4px;
+    text-align: center;
+    border-radius: 3px;
+  }
+
+  .stat-cell b {
+    display: block;
+    font-size: 17px;
+    color: #003399;
+  }
+
+  .stat-cell span {
+    font-size: 10px;
+    color: #555;
+    font-weight: 700;
+  }
+
+  .review-list {
+    margin-top: 10px;
+    border-top: 1px solid #aca899;
+    padding-top: 8px;
+  }
+
+  .review-card {
+    background: #fff;
+    border: 1px solid #b8b4a6;
+    border-radius: 3px;
+    padding: 8px;
+    margin-bottom: 7px;
+    font-size: 11.5px;
+    line-height: 1.4;
+  }
+
+  .review-card .tag-ok { color: #19821d; font-weight: 700; }
+  .review-card .tag-err { color: #c91e1e; font-weight: 700; }
+
+  /* === CLIPPY / СКРЕПЫШ ASSISTANT === */
+  #clippy-box {
+    position: absolute;
+    right: calc(10px + var(--safe-right));
+    bottom: 10px;
+    z-index: 45;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    max-width: 255px;
+    pointer-events: none;
+  }
+
+  .clippy-bubble {
+    pointer-events: auto;
+    background: #ffffe1;
+    border: 1px solid #000;
+    border-radius: 8px;
+    padding: 8px 10px;
+    font-size: 11px;
+    line-height: 1.38;
+    color: #000;
+    box-shadow: 2px 3px 6px rgba(0, 0, 0, 0.35);
+    margin-bottom: 6px;
+    position: relative;
+  }
+
+  .clippy-bubble::after {
+    content: "";
+    position: absolute;
+    bottom: -8px;
+    right: 22px;
+    border-width: 8px 8px 0;
+    border-style: solid;
+    border-color: #ffffe1 transparent;
+  }
+
+  .clippy-close {
+    float: right;
+    margin-left: 6px;
+    background: none;
+    border: none;
+    font-weight: 700;
+    cursor: pointer;
+    padding: 0 3px;
+    color: #555;
+  }
+
+  .clippy-avatar {
+    pointer-events: auto;
+    width: 48px;
+    height: 48px;
+    background: rgba(255, 255, 255, 0.85);
+    border: 1px solid #245edb;
+    border-radius: 50%;
+    display: grid;
+    place-items: center;
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.35);
+    cursor: pointer;
+    transition: transform 0.15s;
+  }
+
+  .clippy-avatar:active {
+    transform: scale(0.92);
+  }
+
+  /* === WINDOWS XP BALLOON NOTIFICATION === */
+  #xp-balloon {
+    position: fixed;
+    right: calc(8px + var(--safe-right));
+    bottom: calc(var(--taskbar-h) + var(--safe-bottom) + 8px);
+    width: min(295px, calc(100vw - 20px));
+    background: #ffffe1;
+    border: 1px solid #000;
+    border-radius: 7px;
+    padding: 9px 11px;
+    box-shadow: 2px 4px 10px rgba(0, 0, 0, 0.4);
+    z-index: 90;
+    font-size: 11.5px;
+    line-height: 1.38;
+    display: none;
+    animation: balloonPop 0.2s ease-out;
+  }
+
+  #xp-balloon.show {
+    display: block;
+  }
+
+  #xp-balloon::after {
+    content: "";
+    position: absolute;
+    bottom: -9px;
+    right: 36px;
+    border-width: 9px 9px 0;
+    border-style: solid;
+    border-color: #ffffe1 transparent;
+  }
+
+  @keyframes balloonPop {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .balloon-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-weight: 700;
+    margin-bottom: 4px;
+    color: #000;
+  }
+
+  /* === START MENU === */
+  #start-menu {
+    position: fixed;
+    left: var(--safe-left);
+    bottom: calc(var(--taskbar-h) + var(--safe-bottom));
+    width: min(335px, calc(100vw - var(--safe-left) - var(--safe-right) - 8px));
+    background: #fff;
+    border: 2px solid #003399;
+    border-top-left-radius: 8px;
+    border-top-right-radius: 8px;
+    box-shadow: 4px -2px 18px rgba(0, 0, 0, 0.55);
+    z-index: 100;
+    display: none;
+    flex-direction: column;
+    overflow: hidden;
+  }
+
+  #start-menu.open {
+    display: flex;
+    animation: startSlide 0.14s ease-out;
+  }
+
+  @keyframes startSlide {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .start-header {
+    background: linear-gradient(180deg, #1b65d9 0%, #3a8df7 45%, #185bc9 100%);
+    padding: 8px 10px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: #fff;
+    font-weight: 700;
+    font-size: 14px;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.55);
+    border-bottom: 2px solid #ff9900;
+  }
+
+  .start-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 5px;
+    border: 2px solid #fff;
+    background: linear-gradient(135deg, #a7d4ff 0%, #2a6fd6 100%);
+    display: grid;
+    place-items: center;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.35);
+    flex-shrink: 0;
+  }
+
+  .start-columns {
+    display: grid;
+    grid-template-columns: 1.15fr 0.85fr;
+    min-height: 230px;
+  }
+
+  .start-left {
+    background: #fff;
+    padding: 6px;
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    border-right: 1px solid #95bdee;
+  }
+
+  .start-right {
+    background: #d3e5fa;
+    padding: 6px;
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+  }
+
+  .start-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 7px 6px;
+    border-radius: 3px;
+    border: none;
+    background: transparent;
+    text-align: left;
+    font-family: var(--font-xp);
+    font-size: 11.5px;
+    color: #111;
+    cursor: pointer;
+    min-height: 36px;
+  }
+
+  .start-item:hover, .start-item:active {
+    background: #2f71cd;
+    color: #fff;
+  }
+
+  .start-item:hover small, .start-item:active small {
+    color: #dceaff;
+  }
+
+  .start-item svg {
+    width: 22px;
+    height: 22px;
+    flex-shrink: 0;
+  }
+
+  .start-item small {
+    display: block;
+    font-size: 10px;
+    color: #666;
+  }
+
+  .start-right .start-item {
+    color: #001d57;
+    font-weight: 600;
+  }
+
+  .start-right .start-item:hover, .start-right .start-item:active {
+    color: #fff;
+  }
+
+  .start-footer {
+    background: linear-gradient(180deg, #3e87eb 0%, #1d5bc6 100%);
+    padding: 6px 10px;
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+    border-top: 1px solid #6ba6ff;
+  }
+
+  .start-power-btn {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background: transparent;
+    border: 1px solid transparent;
+    color: #fff;
+    font-family: var(--font-xp);
+    font-size: 11.5px;
+    padding: 5px 8px;
+    border-radius: 3px;
+    cursor: pointer;
+  }
+
+  .start-power-btn:active {
+    background: rgba(0, 0, 0, 0.25);
+  }
+
+  /* === TASKBAR (WITH BOTTOM SAFE AREA) === */
+  #taskbar {
+    position: relative;
+    z-index: 80;
+    width: 100%;
+    min-height: calc(var(--taskbar-h) + var(--safe-bottom));
+    padding-bottom: var(--safe-bottom);
+    padding-left: var(--safe-left);
+    padding-right: var(--safe-right);
+    background: linear-gradient(180deg,
+      #3168d5 0%,
+      #4993e6 9%,
+      #2257c9 18%,
+      #245edb 90%,
+      #1941a5 100%);
+    display: flex;
+    align-items: stretch;
+    box-shadow: 0 -1px 4px rgba(0, 0, 0, 0.4);
+    flex-shrink: 0;
+  }
+
+  #start-btn {
+    height: var(--taskbar-h);
+    padding: 0 14px 0 10px;
+    border: none;
+    border-top-right-radius: 12px;
+    border-bottom-right-radius: 10px;
+    background: linear-gradient(180deg,
+      #52b852 0%,
+      #3c9c3c 15%,
+      #2e8a2e 85%,
+      #1f691f 100%);
+    box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.65), 2px 0 5px rgba(0, 0, 0, 0.35);
+    color: #fff;
+    font-family: var(--font-xp);
+    font-style: italic;
+    font-weight: 800;
+    font-size: 15px;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.6);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    cursor: pointer;
+    flex-shrink: 0;
+  }
+
+  #start-btn:active, #start-btn.active {
+    filter: brightness(0.88);
+    box-shadow: inset 1px 2px 4px rgba(0, 0, 0, 0.5);
+  }
+
+  .taskbar-tasks {
+    flex: 1;
+    height: var(--taskbar-h);
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    padding: 4px 6px;
+    overflow-x: auto;
+    overflow-y: hidden;
+  }
+
+  .task-tab {
+    height: 28px;
+    min-width: 78px;
+    max-width: 145px;
+    padding: 0 8px;
+    border-radius: 3px;
+    border: 1px solid #163d96;
+    background: linear-gradient(180deg, #4b8bf5 0%, #2b6be0 100%);
+    color: #fff;
+    font-size: 11px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    cursor: pointer;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.35);
+  }
+
+  .task-tab.active {
+    background: linear-gradient(180deg, #19449e 0%, #1e52bd 100%);
+    box-shadow: inset 1px 1px 3px rgba(0, 0, 0, 0.55);
+    border-color: #0e2969;
+  }
+
+  .task-tab svg {
+    width: 14px;
+    height: 14px;
+    flex-shrink: 0;
+  }
+
+  .task-tab span {
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  /* System Tray */
+  .systray {
+    height: var(--taskbar-h);
+    background: linear-gradient(180deg, #1690e6 0%, #1078cf 20%, #0d66b8 90%, #094f94 100%);
+    border-left: 1px solid #0b4182;
+    box-shadow: inset 1px 0 0 rgba(255, 255, 255, 0.28);
+    padding: 0 8px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    color: #fff;
+    font-size: 11px;
+    flex-shrink: 0;
+  }
+
+  .tray-btn {
+    background: none;
+    border: none;
+    padding: 3px;
+    display: grid;
+    place-items: center;
+    cursor: pointer;
+    border-radius: 2px;
+  }
+
+  .tray-btn:active {
+    background: rgba(255, 255, 255, 0.2);
+  }
+
+  .tray-clock {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.2px;
+    padding-left: 2px;
+  }
+
+  /* === BSOD EASTER EGG OVERLAY === */
+  #bsod {
+    position: fixed;
+    inset: 0;
+    background: #0000aa;
+    color: #fff;
+    font-family: var(--font-mono);
+    padding: calc(20px + var(--safe-top)) calc(18px + var(--safe-right)) calc(20px + var(--safe-bottom)) calc(18px + var(--safe-left));
+    z-index: 9999;
+    display: none;
+    flex-direction: column;
+    justify-content: space-between;
+    font-size: 13px;
+    line-height: 1.5;
+    cursor: pointer;
+  }
+
+  #bsod.show {
+    display: flex;
+  }
+
+  .bsod-badge {
+    background: #aaa;
+    color: #0000aa;
+    font-weight: 700;
+    padding: 2px 8px;
+    align-self: center;
+    margin-bottom: 14px;
+  }
+
+  .hidden {
+    display: none !important;
+  }
+
+  /* Password Strength Meter Bar */
+  .pw-meter {
+    height: 12px;
+    background: #e0ded3;
+    border: 1px solid #7f9db9;
+    margin: 6px 0;
+    overflow: hidden;
+  }
+  .pw-meter-bar {
+    height: 100%;
+    width: 0%;
+    transition: width 0.2s, background 0.2s;
+  }
 </style>
 </head>
 <body>
 
-<div class="phone-shell">
-  <!-- BLISS WALLPAPER SVG -->
-  <div class="desktop-bg" aria-hidden="true">
-    <svg viewBox="0 0 430 900" preserveAspectRatio="none">
-      <defs>
-        <linearGradient id="skyGrad" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stop-color="#1A5EC4"/>
-          <stop offset="55%" stop-color="#58A0F0"/>
-          <stop offset="100%" stop-color="#B9DCFC"/>
-        </linearGradient>
-        <linearGradient id="hillBack" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stop-color="#76C232"/>
-          <stop offset="100%" stop-color="#3E8214"/>
-        </linearGradient>
-        <linearGradient id="hillFront" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stop-color="#8AD638"/>
-          <stop offset="45%" stop-color="#53A31B"/>
-          <stop offset="100%" stop-color="#2D6A0E"/>
-        </linearGradient>
-      </defs>
-      <rect width="430" height="900" fill="url(#skyGrad)"/>
-      <g fill="#FFFFFF" opacity="0.82">
-        <ellipse cx="95" cy="120" rx="65" ry="18"/>
-        <ellipse cx="130" cy="112" rx="48" ry="20"/>
-        <ellipse cx="320" cy="155" rx="75" ry="20"/>
-        <ellipse cx="355" cy="146" rx="50" ry="22"/>
-      </g>
-      <path d="M-20,580 Q130,450 280,550 T450,515 L450,900 L-20,900 Z" fill="url(#hillBack)"/>
-      <path d="M-20,635 Q120,485 265,610 T450,565 L450,900 L-20,900 Z" fill="url(#hillFront)"/>
-    </svg>
-  </div>
+<div id="desktop">
+  <!-- Bliss Wallpaper SVG -->
+  <svg class="bliss-svg" viewBox="0 0 800 600" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+    <defs>
+      <linearGradient id="skyGrad" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0%" stop-color="#1957c2"/>
+        <stop offset="55%" stop-color="#5da2f2"/>
+        <stop offset="100%" stop-color="#a8d3fc"/>
+      </linearGradient>
+      <linearGradient id="hillBack" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0%" stop-color="#6cc23b"/>
+        <stop offset="100%" stop-color="#3c8a1e"/>
+      </linearGradient>
+      <linearGradient id="hillFront" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0%" stop-color="#7cd643"/>
+        <stop offset="45%" stop-color="#52a827"/>
+        <stop offset="100%" stop-color="#2e7314"/>
+      </linearGradient>
+    </defs>
+    <rect width="800" height="400" fill="url(#skyGrad)"/>
+    <!-- Soft XP Clouds -->
+    <g fill="#ffffff" opacity="0.72">
+      <ellipse cx="180" cy="110" rx="95" ry="26"/>
+      <ellipse cx="235" cy="102" rx="65" ry="22"/>
+      <ellipse cx="135" cy="118" rx="55" ry="18"/>
+      <ellipse cx="610" cy="85" rx="110" ry="28"/>
+      <ellipse cx="555" cy="96" rx="70" ry="20"/>
+    </g>
+    <!-- Rolling Green Hills -->
+    <path d="M-40,390 Q240,285 520,365 T860,340 L860,600 L-40,600 Z" fill="url(#hillBack)"/>
+    <path d="M-40,425 Q190,335 450,415 T860,385 L860,600 L-40,600 Z" fill="url(#hillFront)"/>
+  </svg>
 
-  <!-- TOP MOBILE STATUS BAR -->
-  <div class="mobile-statusbar">
-    <span id="statusBarClock">12:00</span>
-    <span style="letter-spacing:0.4px;">XP MOBILE // SOC</span>
-    <div class="m-status-group">
-      <span id="statusAudioTag">SFX</span>
-      <span class="m-signal-bars" aria-hidden="true"><i></i><i></i><i></i><i></i></span>
-      <span>100%</span>
+  <!-- Safe Area Top Bar Spacer -->
+  <div class="safe-top-spacer"></div>
+
+  <!-- Main Workspace -->
+  <main id="workspace">
+    <!-- Desktop Icons Grid -->
+    <div class="desktop-grid" id="desktopIcons">
+      <button type="button" class="desk-icon" data-open="win-quiz">
+        <!-- Shield + Terminal XP Icon -->
+        <svg viewBox="0 0 48 48">
+          <path d="M24 4 L40 10 V23 C40 34 32 41 24 45 C16 41 8 34 8 23 V10 Z" fill="#245edb" stroke="#fff" stroke-width="2.5"/>
+          <path d="M24 8 L36 12.5 V23 C36 31.5 30 37 24 40.5 Z" fill="#3a93ff"/>
+          <path d="M16 20 L21 24 L16 28 M23 28 H31" stroke="#a6f5c5" stroke-width="3" stroke-linecap="round" fill="none"/>
+        </svg>
+        <span>BLACK//ICE Lab</span>
+      </button>
+
+      <button type="button" class="desk-icon" data-open="win-mycomp">
+        <!-- My Computer XP Icon -->
+        <svg viewBox="0 0 48 48">
+          <rect x="6" y="7" width="36" height="26" rx="3" fill="#e6e4d8" stroke="#2c4875" stroke-width="2"/>
+          <rect x="10" y="11" width="28" height="18" fill="#1e6bd6"/>
+          <path d="M10 24 Q20 19 38 23 V29 H10 Z" fill="#52b838"/>
+          <rect x="18" y="33" width="12" height="4" fill="#b8b5a8"/>
+          <rect x="11" y="37" width="26" height="4" rx="1.5" fill="#dcd9cc" stroke="#555" stroke-width="1.5"/>
+        </svg>
+        <span>Мой компьютер</span>
+      </button>
+
+      <button type="button" class="desk-icon" data-open="win-notepad">
+        <!-- Notepad XP Icon -->
+        <svg viewBox="0 0 48 48">
+          <rect x="9" y="6" width="30" height="36" rx="2" fill="#fff" stroke="#3568b8" stroke-width="2"/>
+          <rect x="9" y="6" width="30" height="7" fill="#3a93ff"/>
+          <line x1="14" y1="19" x2="34" y2="19" stroke="#555" stroke-width="2"/>
+          <line x1="14" y1="25" x2="31" y2="25" stroke="#555" stroke-width="2"/>
+          <line x1="14" y1="31" x2="27" y2="31" stroke="#555" stroke-width="2"/>
+        </svg>
+        <span>Шпаргалка.txt</span>
+      </button>
+
+      <button type="button" class="desk-icon" data-open="win-pw">
+        <!-- Key / Password Checker XP Icon -->
+        <svg viewBox="0 0 48 48">
+          <circle cx="17" cy="24" r="9" fill="#ffd23f" stroke="#996b00" stroke-width="2.5"/>
+          <circle cx="15" cy="24" r="3" fill="#fff"/>
+          <path d="M26 22 H42 V27 H38 V31 H34 V27 H31 V30 H26 Z" fill="#ffd23f" stroke="#996b00" stroke-width="2"/>
+        </svg>
+        <span>Генератор и тест пароля</span>
+      </button>
+
+      <button type="button" class="desk-icon" data-open="win-trash">
+        <!-- Recycle Bin XP Icon -->
+        <svg viewBox="0 0 48 48">
+          <path d="M13 14 H35 L32 41 H16 Z" fill="#d8e8f8" stroke="#2c5899" stroke-width="2"/>
+          <rect x="11" y="10" width="26" height="4" rx="1.5" fill="#4f94e8" stroke="#1e4278" stroke-width="1.5"/>
+          <path d="M20 22 L24 18 L28 22 M21 31 H27" stroke="#2e8a2e" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+        </svg>
+        <span>Корзина</span>
+      </button>
     </div>
-  </div>
 
-  <!-- MOBILE SHORTCUT DOCK -->
-  <nav class="mobile-dock" aria-label="Ярлыки телефона">
-    <button type="button" class="d-icon selected" id="iconApp">
-      <svg width="26" height="26" viewBox="0 0 32 32"><rect x="3" y="4" width="26" height="24" rx="2" fill="#ECE9D8" stroke="#003399" stroke-width="1.8"/><rect x="3" y="4" width="26" height="6" fill="#0054E3"/><path d="M9 15l4 4-4 4M15 23h8" stroke="#0054E3" stroke-width="2.2" fill="none"/></svg>
-      <span class="d-icon-label">BLACK//ICE</span>
-    </button>
-    <button type="button" class="d-icon" id="iconCmd">
-      <svg width="26" height="26" viewBox="0 0 32 32"><rect x="3" y="5" width="26" height="22" rx="2" fill="#000" stroke="#7F9DB9" stroke-width="1.8"/><rect x="3" y="5" width="26" height="5" fill="#0054E3"/><text x="6" y="21" fill="#00FF00" font-family="monospace" font-size="10" font-weight="bold">C:\&gt;</text></svg>
-      <span class="d-icon-label">cmd.exe</span>
-    </button>
-    <button type="button" class="d-icon" id="iconNotes">
-      <svg width="26" height="26" viewBox="0 0 32 32"><rect x="6" y="3" width="20" height="26" fill="#FFF" stroke="#316AC5" stroke-width="1.8"/><rect x="6" y="3" width="20" height="5" fill="#4A94EB"/><line x1="9" y1="12" x2="23" y2="12" stroke="#888" stroke-width="1.6"/><line x1="9" y1="16" x2="23" y2="16" stroke="#888" stroke-width="1.6"/><line x1="9" y1="20" x2="19" y2="20" stroke="#888" stroke-width="1.6"/></svg>
-      <span class="d-icon-label">Памятка</span>
-    </button>
-    <button type="button" class="d-icon" id="iconBsod">
-      <svg width="26" height="26" viewBox="0 0 32 32"><rect x="3" y="4" width="26" height="24" rx="2" fill="#0000AA" stroke="#FFF" stroke-width="1.5"/><text x="6" y="19" fill="#FFF" font-family="monospace" font-size="9" font-weight="bold">BSOD</text></svg>
-      <span class="d-icon-label">BSOD</span>
-    </button>
-  </nav>
-
-  <!-- MAIN MOBILE WORKSPACE -->
-  <main class="workspace">
-    <div class="xp-window" id="mainWindow">
-      <!-- Luna Title Bar -->
-      <div class="xp-titlebar">
+    <!-- =========================================================
+         WINDOW 1: BLACK//ICE SECURITY LAB (MAIN QUIZ)
+         ========================================================= -->
+    <section class="xp-window" id="win-quiz" data-title="BLACK//ICE Lab" aria-label="BLACK//ICE Security Lab">
+      <div class="xp-titlebar" data-focus="win-quiz">
         <div class="xp-title-left">
-          <svg width="16" height="16" viewBox="0 0 16 16"><rect x="1" y="1" width="14" height="14" rx="2" fill="#FFF"/><path d="M3 5l3 3-3 3M8 11h5" stroke="#0054E3" stroke-width="1.8" fill="none"/></svg>
-          <span class="xp-title-text" id="winTitleText">BLACK//ICE XP — Security Lab</span>
+          <svg viewBox="0 0 24 24"><path d="M12 2L20 5V11C20 16.5 16.5 20.5 12 22C7.5 20.5 4 16.5 4 11V5L12 2Z" fill="#3a93ff" stroke="#fff" stroke-width="1.5"/></svg>
+          <span class="xp-title-text">BLACK//ICE XP — Security Lab [v2.6]</span>
         </div>
-        <div class="xp-win-btns">
-          <button type="button" class="xp-cap-btn" id="btnMin" title="Свернуть">_</button>
-          <button type="button" class="xp-cap-btn close" id="btnClose" title="Закрыть">×</button>
+        <div class="xp-controls">
+          <button type="button" class="xp-ctrl-btn" data-min="win-quiz" title="Свернуть">_</button>
+          <button type="button" class="xp-ctrl-btn" data-max="win-quiz" title="Развернуть">□</button>
+          <button type="button" class="xp-ctrl-btn close" data-close="win-quiz" title="Закрыть">×</button>
         </div>
       </div>
-
-      <!-- Address Bar -->
+      <div class="xp-menubar">
+        <div class="xp-menu-items">
+          <span id="menuRestart">Файл</span>
+          <span id="menuClippy">Помощник</span>
+          <span id="menuSound">Звук: ВКЛ</span>
+        </div>
+        <span style="color:#003399;font-weight:700;">LOCAL // SAFE</span>
+      </div>
       <div class="xp-addressbar">
-        <span>Путь:</span>
-        <div class="xp-address-box" id="addressPath">C:\BLACK_ICE\ForensicsLab.exe</div>
+        <span class="xp-address-label">Адрес:</span>
+        <div class="xp-address-box" id="quizAddress">C:\Program Files\BLACK_ICE\lab.exe</div>
       </div>
 
-      <!-- Window Body -->
-      <div class="xp-body">
-        <!-- SCREEN 1: HOME -->
-        <section class="screen active" id="home">
+      <div class="xp-body" id="quizBody">
+        <!-- SCREEN 1: HOME / PROTOCOL SELECTION -->
+        <div id="screen-home">
           <div class="xp-banner">
-            <div>
-              <h1>BLACK//ICE XP Lab</h1>
-              <p>Мобильный тренажер SOC/AppSec: разбор заголовков, логов, скриптов и атак в стиле Windows XP.</p>
-            </div>
-            <svg width="38" height="38" viewBox="0 0 48 48" style="flex-shrink:0"><path d="M24 4L6 12v12c0 11.1 7.7 21.5 18 24 10.3-2.5 18-12.9 18-24V12L24 4z" fill="#FFB800" stroke="#FFF" stroke-width="2"/><path d="M24 13v13M24 31v3" stroke="#00277A" stroke-width="3.5" stroke-linecap="round"/></svg>
+            <span class="xp-banner-badge">FIELD MANUAL № 001 / CYBER HYGIENE</span>
+            <h1>НЕ ВЕРЬ. ПРОВЕРЬ.</h1>
+            <p>Цифровая безопасность — не набор скучных правил, а привычка замечать детали раньше, чем ими воспользуются против тебя.</p>
           </div>
 
-          <div class="xp-stats-bar">
-            <div class="xp-sunken-card"><span>Рекорд</span><strong id="hudBestScore">0 PTS</strong></div>
-            <div class="xp-sunken-card"><span>Допуск</span><strong id="hudBestRank">НЕТ</strong></div>
-            <div class="xp-sunken-card"><span>Сессий</span><strong id="hudSessions">0</strong></div>
+          <div class="xp-groupbox">
+            <div class="xp-group-title">01 / ИНИЦИАЛИЗАЦИЯ АГЕНТА</div>
+            <label for="nickname" style="display:block;font-size:11px;margin-bottom:5px;color:#333;">Позывной участника (отобразится в меню «Пуск» и сертификате):</label>
+            <input type="text" id="nickname" class="xp-input" maxlength="18" placeholder="Например, NEO_07" autocomplete="nickname">
           </div>
 
-          <fieldset class="xp-group">
-            <legend>1. Позывной оперативника</legend>
-            <input class="xp-input" id="nickname" maxlength="20" autocomplete="off" placeholder="Введите позывной (например, Admin_XP)">
-            <div class="xp-input-actions">
-              <button type="button" class="xp-btn" id="genCallsignBtn">Случайный ID</button>
-              <button type="button" class="xp-btn" id="resetStatsBtn">Сбросить логи</button>
-            </div>
-          </fieldset>
-
-          <fieldset class="xp-group" style="margin-bottom:0">
-            <legend>2. Выбор протокола симуляции</legend>
-            <div class="modes-stack">
-              <button type="button" class="xp-mode-btn" data-mode="training">
-                <svg width="26" height="26" viewBox="0 0 24 24" style="flex-shrink:0"><rect x="2" y="3" width="20" height="18" rx="2" fill="#D8E8FF" stroke="#0054E3" stroke-width="1.6"/><path d="M6 9h12M6 13h8" stroke="#0054E3" stroke-width="2"/></svg>
-                <span class="xp-mode-copy">
-                  <b>TRAINING <span class="xp-tag">10 КЕЙСОВ · БЕЗ ТАЙМЕРА</span></b>
-                  <small>Вдумчивый разбор артефактов и декодер</small>
-                </span>
-                <span class="xp-mode-chevron">›</span>
+          <div class="xp-groupbox">
+            <div class="xp-group-title">02 / ВЫБОР ПРОТОКОЛА ПРОВЕРКИ</div>
+            <div class="mode-grid">
+              <button type="button" class="xp-mode-card" data-mode="training">
+                <div class="mode-num">01</div>
+                <div class="mode-info">
+                  <b>TRAINING</b>
+                  <small>12 кейсов · без таймера · подробный разбор</small>
+                </div>
               </button>
-
-              <button type="button" class="xp-mode-btn" data-mode="time">
-                <svg width="26" height="26" viewBox="0 0 24 24" style="flex-shrink:0"><circle cx="12" cy="13" r="8" fill="#FFF3CD" stroke="#D97706" stroke-width="1.6"/><path d="M12 9v4l3 2M9 3h6" stroke="#D97706" stroke-width="2" fill="none"/></svg>
-                <span class="xp-mode-copy">
-                  <b>TIME ATTACK <span class="xp-tag">25 СЕК НА КЕЙС</span></b>
-                  <small>Быстрая сортировка инцидентов на время</small>
-                </span>
-                <span class="xp-mode-chevron">›</span>
+              <button type="button" class="xp-mode-card" data-mode="time">
+                <div class="mode-num">02</div>
+                <div class="mode-info">
+                  <b>TIME ATTACK</b>
+                  <small>12 кейсов · 20 секунд на решение</small>
+                </div>
               </button>
-
-              <button type="button" class="xp-mode-btn" data-mode="champ">
-                <svg width="26" height="26" viewBox="0 0 24 24" style="flex-shrink:0"><polygon points="12,2 15,9 22,9 16,14 18,21 12,17 6,21 8,14 2,9 9,9" fill="#FFD700" stroke="#B45309" stroke-width="1.5"/></svg>
-                <span class="xp-mode-copy">
-                  <b>CHAMPIONSHIP <span class="xp-tag">КОМБО + СКОРОСТЬ</span></b>
-                  <small>Максимум баллов за серию точных вердиктов</small>
-                </span>
-                <span class="xp-mode-chevron">›</span>
+              <button type="button" class="xp-mode-card" data-mode="champ">
+                <div class="mode-num">03</div>
+                <div class="mode-info">
+                  <b>CHAMPIONSHIP</b>
+                  <small>Скорость + точность · комбо-бонусы</small>
+                </div>
               </button>
-
-              <button type="button" class="xp-mode-btn" data-mode="boss">
-                <svg width="26" height="26" viewBox="0 0 24 24" style="flex-shrink:0"><polygon points="12,2 22,20 2,20" fill="#FEE2E2" stroke="#C50F1F" stroke-width="1.6"/><path d="M12 9v5M12 17v1" stroke="#C50F1F" stroke-width="2.2"/></svg>
-                <span class="xp-mode-copy">
-                  <b>FINAL BOSS <span class="xp-tag">7 КЕЙСОВ · МНОЖ. ВЫБОР</span></b>
-                  <small>APT Containment: выбор всех мер сдерживания</small>
-                </span>
-                <span class="xp-mode-chevron">›</span>
+              <button type="button" class="xp-mode-card" data-mode="boss">
+                <div class="mode-num" style="background:linear-gradient(180deg,#f36b4f,#b8230b);border-color:#690d00;">04</div>
+                <div class="mode-info">
+                  <b>FINAL BOSS</b>
+                  <small>8 сложных кейсов · множественный выбор</small>
+                </div>
               </button>
             </div>
-          </fieldset>
-        </section>
+          </div>
+          <div style="font-size:11px;color:#555;text-align:center;">Подсказка: ищи не самый быстрый, а самый безопасный ход.</div>
+        </div>
 
-        <!-- SCREEN 2: QUIZ GAME -->
-        <section class="screen" id="game">
-          <div class="quiz-header-bar">
+        <!-- SCREEN 2: ACTIVE QUIZ -->
+        <div id="screen-game" class="hidden">
+          <div class="quiz-hud">
             <span id="modeName">TRAINING</span>
-            <strong id="scoreNow">0 PTS</strong>
+            <span id="caseTag">КЕЙС 01 / 12</span>
+            <span id="scoreNow">0 ОЧКОВ</span>
           </div>
 
-          <div class="xp-progress-track">
-            <div class="xp-progress-fill" id="bar"></div>
-          </div>
-
-          <div class="case-meta-strip">
-            <span><strong id="caseTag">КЕЙС 01 / 10</strong> · <span id="caseDomain">EMAIL_AUTH</span></span>
-            <span class="timer-badge hidden" id="timer">00:25</span>
-          </div>
-
-          <p class="question-title" id="question"></p>
-
-          <!-- Evidence Notepad Box -->
-          <div class="xp-notepad">
-            <div class="xp-notepad-bar">
-              <span id="evidenceTitle">Артефакт.log</span>
-              <button type="button" class="xp-btn compact hidden" id="inspectBtn">Декодировать</button>
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;">
+            <div class="xp-progress-wrap" style="flex:1;">
+              <div class="xp-progress-fill" id="bar"></div>
             </div>
-            <pre class="xp-notepad-code" id="evidenceCode"></pre>
-            <div class="xp-inspector-out hidden" id="inspectorDrawer"></div>
+            <span class="timer-pill hidden" id="timer">00:20</span>
           </div>
 
-          <div class="xp-balloon-inline hidden" id="terminalHintBox"></div>
+          <div class="xp-groupbox">
+            <div class="xp-group-title" id="typeTag">ОДИН ВАРИАНТ ОТВЕТА</div>
+            <div class="q-title" id="question"></div>
+            <p class="q-hint" id="hint"></p>
+            <div class="xp-answers" id="answers"></div>
+            <div class="xp-feedback hidden" id="feedback" aria-live="polite"></div>
 
-          <div class="quiz-quick-tools">
-            <span id="hint">Выберите верный вариант.</span>
-            <button type="button" class="xp-btn compact" id="quickCmdBtn">cmd / hint</button>
+            <div class="xp-actions-row">
+              <button type="button" class="xp-btn" id="homeBtn">← Выйти</button>
+              <button type="button" class="xp-btn primary hidden" id="checkBtn" disabled>Проверить</button>
+              <button type="button" class="xp-btn primary hidden" id="nextBtn">Далее →</button>
+            </div>
           </div>
-
-          <div class="answers-list" id="answers"></div>
-
-          <div class="xp-dialog-feedback hidden" id="feedback" aria-live="polite"></div>
-
-          <div class="quiz-footer-btns">
-            <button type="button" class="xp-btn" id="homeBtn">Выйти</button>
-            <button type="button" class="xp-btn primary hidden" id="checkBtn" disabled>Проверить</button>
-            <button type="button" class="xp-btn primary hidden" id="nextBtn">Далее ›</button>
-          </div>
-        </section>
+        </div>
 
         <!-- SCREEN 3: RESULTS -->
-        <section class="screen" id="results">
-          <div class="result-summary-box">
-            <div style="font-size:11.5px;color:#555;">Итог сессии расследования</div>
-            <div class="result-big-score" id="finalScore">0 PTS</div>
-            <div style="font-weight:bold;color:#107C10;font-size:13.5px;margin-bottom:8px;" id="rank">SOC TRAINEE L1</div>
-            <div class="xp-stats-bar" style="margin-bottom:0">
-              <div class="xp-sunken-card"><span>Верно</span><strong id="rightCount">0/10</strong></div>
-              <div class="xp-sunken-card"><span>Ошибки</span><strong id="wrongCount">0</strong></div>
-              <div class="xp-sunken-card"><span>Точность</span><strong id="percent">0%</strong></div>
-            </div>
+        <div id="screen-results" class="hidden">
+          <div class="xp-cert">
+            <div style="font-size:10px;font-weight:700;color:#245edb;letter-spacing:0.6px;">WINDOWS XP SECURITY AUDIT REPORT</div>
+            <div class="cert-score" id="finalScore">0/12</div>
+            <div class="cert-rank" id="rank">ЦИФРОВОЙ РАЗВЕДЧИК</div>
+            <p id="description" style="margin:6px 0 0;font-size:12px;line-height:1.45;color:#222;"></p>
           </div>
 
-          <p style="margin:0 0 10px;font-size:12.5px;line-height:1.42;" id="description"></p>
+          <div class="stats-trio">
+            <div class="stat-cell"><b id="rightCount">0</b><span>ВЕРНО</span></div>
+            <div class="stat-cell"><b id="wrongCount">0</b><span>ОШИБКИ</span></div>
+            <div class="stat-cell"><b id="percent">0%</b><span>ТОЧНОСТЬ</span></div>
+          </div>
 
-          <fieldset class="xp-group">
-            <legend>Рапорт оперативника</legend>
-            <div class="dossier-box" id="dossierText"></div>
-            <div class="result-btns-stack">
-              <button type="button" class="xp-btn primary full" id="copyDossierBtn">Копировать рапорт</button>
-              <button type="button" class="xp-btn full" id="again">Повторить протокол ↻</button>
-              <button type="button" class="xp-btn full" id="reviewToggle">Разбор всех кейсов</button>
-              <button type="button" class="xp-btn full" id="backHome">На главный экран</button>
-            </div>
-          </fieldset>
+          <div style="display:grid;gap:7px;">
+            <button type="button" class="xp-btn primary full" id="again">↻ Повторить протокол</button>
+            <button type="button" class="xp-btn full" id="saveDesktopBtn">💾 Сохранить отчёт на Рабочий стол</button>
+            <button type="button" class="xp-btn full" id="reviewToggle">📋 Разобрать все кейсы</button>
+            <button type="button" class="xp-btn full" id="backHome">В главное меню</button>
+          </div>
 
           <div class="review-list hidden" id="review"></div>
-        </section>
+        </div>
       </div>
+    </section>
+
+    <!-- =========================================================
+         WINDOW 2: МОЙ КОМПЬЮТЕР (SYSTEM INFO & AGENT PROFILE)
+         ========================================================= -->
+    <section class="xp-window minimized" id="win-mycomp" data-title="Мой компьютер" aria-label="Мой компьютер">
+      <div class="xp-titlebar" data-focus="win-mycomp">
+        <div class="xp-title-left">
+          <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="13" rx="1.5" fill="#1e6bd6" stroke="#fff" stroke-width="1.5"/><rect x="8" y="18" width="8" height="2" fill="#fff"/></svg>
+          <span class="xp-title-text">Мой компьютер — Свойства системы</span>
+        </div>
+        <div class="xp-controls">
+          <button type="button" class="xp-ctrl-btn" data-min="win-mycomp">_</button>
+          <button type="button" class="xp-ctrl-btn" data-max="win-mycomp">□</button>
+          <button type="button" class="xp-ctrl-btn close" data-close="win-mycomp">×</button>
+        </div>
+      </div>
+      <div class="xp-body">
+        <div class="xp-groupbox">
+          <div class="xp-group-title">Система:</div>
+          <p style="margin:0 0 4px;font-size:12px;"><b>Microsoft Windows XP</b></p>
+          <p style="margin:0 0 4px;font-size:12px;">Cyber Defense Edition (Service Pack 3)</p>
+          <p style="margin:0;font-size:11px;color:#555;">Ядро: BLACK//ICE Mobile Sandbox · Safe-Area Ready</p>
+        </div>
+        <div class="xp-groupbox">
+          <div class="xp-group-title">Профиль текущего пользователя:</div>
+          <p style="margin:0 0 5px;font-size:12px;">Позывной: <b id="sysUser">Гость</b></p>
+          <p style="margin:0 0 5px;font-size:12px;">Статус защиты: <b id="sysStatus" style="color:#c91e1e;">Требуется проверка</b></p>
+          <p style="margin:0;font-size:12px;">Лучший результат сессии: <b id="sysBest">Нет данных</b></p>
+        </div>
+        <button type="button" class="xp-btn primary full" data-open="win-quiz">Запустить проверку BLACK//ICE</button>
+      </div>
+    </section>
+
+    <!-- =========================================================
+         WINDOW 3: БЛОКНОТ (ШПАРГАЛКА И ОТЧЁТЫ)
+         ========================================================= -->
+    <section class="xp-window minimized" id="win-notepad" data-title="Шпаргалка.txt" aria-label="Блокнот">
+      <div class="xp-titlebar" data-focus="win-notepad">
+        <div class="xp-title-left">
+          <svg viewBox="0 0 24 24"><rect x="4" y="3" width="16" height="18" fill="#fff" stroke="#3568b8" stroke-width="1.5"/><rect x="4" y="3" width="16" height="4" fill="#3a93ff"/></svg>
+          <span class="xp-title-text" id="notepadTitle">Шпаргалка.txt — Блокнот</span>
+        </div>
+        <div class="xp-controls">
+          <button type="button" class="xp-ctrl-btn" data-min="win-notepad">_</button>
+          <button type="button" class="xp-ctrl-btn" data-max="win-notepad">□</button>
+          <button type="button" class="xp-ctrl-btn close" data-close="win-notepad">×</button>
+        </div>
+      </div>
+      <div class="xp-menubar">
+        <div class="xp-menu-items">
+          <span id="resetCheatBtn">Открыть шпаргалку</span>
+          <span id="copyNoteBtn">Копировать текст</span>
+        </div>
+      </div>
+      <div class="xp-body notepad-mode">
+        <textarea id="notepadArea" class="selectable" style="flex:1;width:100%;border:none;outline:none;padding:10px;font-family:var(--font-mono);font-size:12px;line-height:1.5;resize:none;color:#111;"></textarea>
+      </div>
+    </section>
+
+    <!-- =========================================================
+         WINDOW 4: ПРОВЕРКА И ГЕНЕРАТОР ПАРОЛЕЙ
+         ========================================================= -->
+    <section class="xp-window minimized" id="win-pw" data-title="Тест пароля" aria-label="Тест пароля">
+      <div class="xp-titlebar" data-focus="win-pw">
+        <div class="xp-title-left">
+          <svg viewBox="0 0 24 24"><circle cx="9" cy="12" r="4" fill="#ffd23f" stroke="#fff"/><path d="M13 11H21V14H19V16H17V14H13Z" fill="#ffd23f"/></svg>
+          <span class="xp-title-text">Анализатор стойкости паролей XP</span>
+        </div>
+        <div class="xp-controls">
+          <button type="button" class="xp-ctrl-btn" data-min="win-pw">_</button>
+          <button type="button" class="xp-ctrl-btn" data-max="win-pw">□</button>
+          <button type="button" class="xp-ctrl-btn close" data-close="win-pw">×</button>
+        </div>
+      </div>
+      <div class="xp-body">
+        <div class="xp-groupbox">
+          <div class="xp-group-title">Введи пароль для локального анализа (никуда не отправляется):</div>
+          <input type="text" id="pwTestInput" class="xp-input" placeholder="Введи тестовый пароль...">
+          <div class="pw-meter"><div class="pw-meter-bar" id="pwBar"></div></div>
+          <div id="pwVerdict" style="font-size:12px;font-weight:700;color:#333;">Ожидание ввода...</div>
+          <div id="pwTime" style="font-size:11px;color:#555;margin-top:3px;"></div>
+        </div>
+        <button type="button" class="xp-btn primary full" id="genPwBtn">🎲 Сгенерировать надёжную парольную фразу</button>
+      </div>
+    </section>
+
+    <!-- =========================================================
+         WINDOW 5: КОРЗИНА (EASTER EGG)
+         ========================================================= -->
+    <section class="xp-window minimized" id="win-trash" data-title="Корзина" aria-label="Корзина">
+      <div class="xp-titlebar" data-focus="win-trash">
+        <div class="xp-title-left">
+          <svg viewBox="0 0 24 24"><path d="M6 7H18L16.5 21H7.5Z" fill="#d8e8f8" stroke="#fff" stroke-width="1.5"/></svg>
+          <span class="xp-title-text">Корзина — Карантин угроз</span>
+        </div>
+        <div class="xp-controls">
+          <button type="button" class="xp-ctrl-btn" data-min="win-trash">_</button>
+          <button type="button" class="xp-ctrl-btn" data-max="win-trash">□</button>
+          <button type="button" class="xp-ctrl-btn close" data-close="win-trash">×</button>
+        </div>
+      </div>
+      <div class="xp-body">
+        <div class="xp-groupbox">
+          <div class="xp-group-title">Обезвреженные объекты в карантине:</div>
+          <div style="font-size:12px;line-height:1.55;">
+            <p style="margin:0 0 8px;">📄 <b>Срочно_Счёт_Оплата.pdf.exe</b><br><span style="color:#666;font-size:11px;">Причина удаления: двойное расширение, маскировка трояна под документ.</span></p>
+            <p style="margin:0 0 8px;">📧 <b>Вы_выиграли_Айфон_2026.eml</b><br><span style="color:#666;font-size:11px;">Причина удаления: классический фишинг с требованием ввести данные карты.</span></p>
+            <p style="margin:0;">🔌 <b>Бесплатная_Флешка_С_Парковки.lnk</b><br><span style="color:#666;font-size:11px;">Причина удаления: попытка автозапуска неизвестного сценария.</span></p>
+          </div>
+        </div>
+        <button type="button" class="xp-btn full" id="emptyTrashBtn">Очистить корзину (Уничтожить угрозы)</button>
+      </div>
+    </section>
+
+    <!-- CLIPPY / СКРЕПЫШ -->
+    <div id="clippy-box">
+      <div class="clippy-bubble" id="clippyBubble">
+        <button type="button" class="clippy-close" id="closeClippy" aria-label="Скрыть">×</button>
+        <div id="clippyText">Похоже, ты проверяешь цифровую гигиену! Не забудь: ни один банк не просит код из SMS.</div>
+      </div>
+      <button type="button" class="clippy-avatar" id="clippyBtn" title="Спросить Скрепыша">
+        <svg width="28" height="28" viewBox="0 0 32 32">
+          <path d="M11 21 V10 A5 5 0 0 1 21 10 V22 A7 7 0 0 1 7 22 V12" fill="none" stroke="#444" stroke-width="2.6" stroke-linecap="round"/>
+          <circle cx="13" cy="12" r="2.2" fill="#fff" stroke="#000" stroke-width="1"/>
+          <circle cx="19" cy="12" r="2.2" fill="#fff" stroke="#000" stroke-width="1"/>
+          <circle cx="13.5" cy="12" r="1" fill="#000"/>
+          <circle cx="19.5" cy="12" r="1" fill="#000"/>
+          <path d="M11 8 Q13 6 15 8 M17 8 Q19 6 21 8" stroke="#000" stroke-width="1.2" fill="none"/>
+        </svg>
+      </button>
     </div>
   </main>
 
-  <!-- BALLOON TIP ABOVE MOBILE TASKBAR -->
-  <div class="xp-balloon-popup" id="xpBalloon" role="status">
-    <div class="xp-balloon-top">
-      <span id="balloonTitle">Безопасность Windows XP</span>
-      <button type="button" class="xp-balloon-close" id="balloonClose" title="Закрыть">×</button>
+  <!-- WINDOWS SECURITY CENTER BALLOON -->
+  <div id="xp-balloon" role="status">
+    <div class="balloon-head">
+      <span style="display:flex;align-items:center;gap:5px;">
+        <svg width="15" height="15" viewBox="0 0 24 24"><path d="M12 2L20 5V11C20 16.5 16.5 20.5 12 22C7.5 20.5 4 16.5 4 11V5L12 2Z" fill="#d82c2c"/><path d="M12 7V13M12 16V17" stroke="#fff" stroke-width="2.4" stroke-linecap="round"/></svg>
+        Центр обеспечения безопасности
+      </span>
+      <button type="button" id="closeBalloon" style="background:none;border:none;font-weight:700;cursor:pointer;">×</button>
     </div>
-    <div id="balloonBody">Тапайте по ярлыкам сверху или нажмите «пуск» внизу для доступа к cmd.exe, памятке и BSOD.</div>
+    <div>Ваш компьютер может быть подвергнут риску! Пройдите протокол <b>BLACK//ICE</b>, чтобы проверить навыки защиты.</div>
   </div>
 
-  <!-- SINGLE-COLUMN MOBILE START MENU -->
-  <div class="xp-start-menu hidden" id="startMenu" role="menu">
+  <!-- START MENU -->
+  <nav id="start-menu" aria-label="Меню Пуск">
     <div class="start-header">
       <div class="start-avatar">
-        <svg width="24" height="24" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4" fill="#0054E3"/><path d="M4 20c0-4 4-6 8-6s8 2 8 6" fill="#0054E3"/></svg>
+        <svg width="26" height="26" viewBox="0 0 24 24" fill="#fff"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
       </div>
-      <span id="startUserName">Оперативник XP</span>
+      <span id="startUserName">Агент BLACK//ICE</span>
     </div>
-    <div class="start-col-single">
-      <div class="start-section-lbl">ПРОТОКОЛЫ ТРЕНАЖЁРА</div>
-      <button type="button" class="start-item" data-start-mode="training">
-        <span><strong>TRAINING</strong> · 10 кейсов</span><span>›</span>
-      </button>
-      <button type="button" class="start-item" data-start-mode="time">
-        <span><strong>TIME ATTACK</strong> · 25 сек</span><span>›</span>
-      </button>
-      <button type="button" class="start-item" data-start-mode="champ">
-        <span><strong>CHAMPIONSHIP</strong> · Комбо</span><span>›</span>
-      </button>
-      <button type="button" class="start-item" data-start-mode="boss">
-        <span><strong>FINAL BOSS</strong> · Множ. выбор</span><span>›</span>
-      </button>
-
-      <div class="start-section-lbl">ИНСТРУМЕНТЫ СИСТЕМЫ</div>
-      <button type="button" class="start-item sys-item" id="startOpenCmd">
-        <span>Командная строка (cmd.exe)</span><span>›</span>
-      </button>
-      <button type="button" class="start-item sys-item" id="startNotes">
-        <span>Памятка SOC и статистика</span><span>›</span>
-      </button>
-      <button type="button" class="start-item sys-item" id="startToggleSfx">
-        <span>Переключить звук (SFX)</span><span>♪</span>
-      </button>
-      <button type="button" class="start-item sys-item" id="startBsod">
-        <span>Вызвать синий экран (BSOD)</span><span>!</span>
-      </button>
+    <div class="start-columns">
+      <div class="start-left">
+        <button type="button" class="start-item" data-open="win-quiz">
+          <svg viewBox="0 0 24 24"><path d="M12 2L20 5V11C20 16.5 16.5 20.5 12 22C7.5 20.5 4 16.5 4 11V5L12 2Z" fill="#245edb"/></svg>
+          <div><b>BLACK//ICE Lab</b><small>Тест кибербезопасности</small></div>
+        </button>
+        <button type="button" class="start-item" data-open="win-pw">
+          <svg viewBox="0 0 24 24"><circle cx="9" cy="12" r="4.5" fill="#f5b800"/><path d="M13 11H21V14H19V16H17V14H13Z" fill="#f5b800"/></svg>
+          <div><b>Тест пароля</b><small>Проверка стойкости</small></div>
+        </button>
+        <button type="button" class="start-item" data-open="win-notepad">
+          <svg viewBox="0 0 24 24"><rect x="4" y="3" width="16" height="18" fill="#fff" stroke="#3568b8" stroke-width="1.5"/><rect x="4" y="3" width="16" height="4" fill="#3a93ff"/></svg>
+          <div><b>Блокнот</b><small>Шпаргалка по защите</small></div>
+        </button>
+        <button type="button" class="start-item" id="startClippyToggle">
+          <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" fill="#ffe866" stroke="#b38f00" stroke-width="1.5"/><text x="12" y="16" text-anchor="middle" font-size="12" font-weight="bold">?</text></svg>
+          <div><b>Скрепыш (ИИ)</b><small>Показать / скрыть</small></div>
+        </button>
+      </div>
+      <div class="start-right">
+        <button type="button" class="start-item" data-open="win-mycomp">
+          <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="12" fill="#245edb"/><rect x="8" y="17" width="8" height="2" fill="#555"/></svg>
+          <span>Мой компьютер</span>
+        </button>
+        <button type="button" class="start-item" data-open="win-trash">
+          <svg viewBox="0 0 24 24"><path d="M6 7H18L16.5 21H7.5Z" fill="#7ab3f5"/></svg>
+          <span>Корзина</span>
+        </button>
+        <button type="button" class="start-item" id="startBalloonBtn">
+          <svg viewBox="0 0 24 24"><path d="M12 2L20 5V11C20 16.5 16.5 20.5 12 22C7.5 20.5 4 16.5 4 11V5L12 2Z" fill="#d82c2c"/></svg>
+          <span>Центр защиты</span>
+        </button>
+      </div>
     </div>
     <div class="start-footer">
-      <button type="button" class="start-power-btn" id="startShutdown">
-        <span>⏻ Завершение работы</span>
+      <button type="button" class="start-power-btn" id="bsodTrigger">
+        <span style="display:inline-grid;place-items:center;width:18px;height:18px;background:#e04328;border:1px solid #fff;border-radius:3px;font-weight:900;">⏻</span>
+        <span>Выключение</span>
       </button>
     </div>
-  </div>
+  </nav>
 
-  <!-- MOBILE XP TASKBAR -->
-  <footer class="xp-taskbar">
-    <button type="button" class="xp-start-btn" id="startBtn" aria-expanded="false">
-      <svg width="16" height="16" viewBox="0 0 16 16">
-        <path d="M1 3l6-1v5.5H1V3z" fill="#F25022"/>
-        <path d="M8 1.8L15 1v6.5H8V1.8z" fill="#7FBA00"/>
-        <path d="M1 8.5h6V14l-6-1V8.5z" fill="#00A4EF"/>
-        <path d="M8 8.5h7V15l-7-1V8.5z" fill="#FFB900"/>
+  <!-- BOTTOM TASKBAR -->
+  <footer id="taskbar">
+    <button type="button" id="start-btn" aria-expanded="false">
+      <!-- Classic 4-color Windows Flag -->
+      <svg width="18" height="18" viewBox="0 0 24 24">
+        <path d="M2 5 Q7 3 11 5 V11 Q7 9 2 11 Z" fill="#f25022"/>
+        <path d="M13 5 Q17 7 22 5 V11 Q17 13 13 11 Z" fill="#7fba00"/>
+        <path d="M2 13 Q7 11 11 13 V19 Q7 17 2 19 Z" fill="#00a4ef"/>
+        <path d="M13 13 Q17 15 22 13 V19 Q17 21 13 19 Z" fill="#ffb900"/>
       </svg>
       <span>пуск</span>
     </button>
 
-    <div class="xp-tasks">
-      <button type="button" class="xp-task-tab active-tab" id="taskMainTab">
-        <span id="taskTabLabel">BLACK//ICE XP Lab</span>
-      </button>
-    </div>
+    <div class="taskbar-tasks" id="taskbarTasks"></div>
 
-    <div class="xp-tray">
-      <button type="button" class="tray-btn" id="sfxToggle" title="Звук">
-        <svg width="16" height="16" viewBox="0 0 16 16" id="sfxIcon">
-          <path d="M2 6h3l4-4v12l-4-4H2V6z" fill="#FFF"/>
-          <path d="M11 5c1.5 1.5 1.5 4.5 0 6M13 3c2.5 2.5 2.5 7.5 0 10" stroke="#FFF" stroke-width="1.5" fill="none"/>
+    <div class="systray">
+      <button type="button" class="tray-btn" id="trayShield" title="Центр обеспечения безопасности XP">
+        <svg width="16" height="16" viewBox="0 0 24 24">
+          <path d="M12 2L20 5V11C20 16.5 16.5 20.5 12 22C7.5 20.5 4 16.5 4 11V5L12 2Z" fill="#e62e2e" stroke="#fff" stroke-width="1.5"/>
+          <path d="M12 7V13M12 16V17" stroke="#fff" stroke-width="2.2" stroke-linecap="round"/>
         </svg>
       </button>
-      <span id="trayClock">12:00</span>
+      <button type="button" class="tray-btn" id="traySound" title="Звук Windows XP">
+        <svg id="soundIconOn" width="16" height="16" viewBox="0 0 24 24" fill="#fff">
+          <path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02z"/>
+        </svg>
+        <svg id="soundIconOff" class="hidden" width="16" height="16" viewBox="0 0 24 24" fill="#ffb3b3">
+          <path d="M16.5 12c0-1.77-1.02-3.29-2.5-4.03v2.21l2.45 2.45c.03-.2.05-.41.05-.63zm2.5 0c0 .94-.2 1.82-.54 2.64l1.51 1.51C20.63 14.91 21 13.5 21 12c0-4.28-2.99-7.86-7-8.77v2.06c2.89.86 5 3.54 5 6.71zM4.27 3L3 4.27 7.73 9H3v6h4l5 5v-6.73l4.25 4.25c-.67.52-1.42.93-2.25 1.18v2.06c1.38-.31 2.63-.95 3.69-1.81L19.73 21 21 19.73l-9-9L4.27 3z"/>
+        </svg>
+      </button>
+      <span class="tray-clock" id="trayClock">12:00</span>
     </div>
   </footer>
 </div>
 
-<!-- CMD.EXE MODAL -->
-<div class="xp-modal-backdrop hidden" id="termModal" role="dialog" aria-modal="true" aria-label="Командная строка">
-  <div class="cmd-window">
-    <div class="xp-titlebar">
-      <div class="xp-title-left">
-        <span class="xp-title-text">C:\WINDOWS\system32\cmd.exe</span>
-      </div>
-      <div class="xp-win-btns">
-        <button type="button" class="xp-cap-btn close" id="termClose" title="Закрыть">×</button>
-      </div>
-    </div>
-    <div class="cmd-body" id="termOutput"></div>
-    <form class="cmd-input-line" id="termForm">
-      <span>C:\&gt;</span>
-      <input type="text" class="cmd-input" id="termInput" autocomplete="off" spellcheck="false" placeholder="help, scan, hint, bsod">
-    </form>
-  </div>
-</div>
-
-<!-- CLASSIC XP MESSAGE BOX MODAL -->
-<div class="xp-modal-backdrop hidden" id="msgModal" role="dialog" aria-modal="true">
-  <div class="msgbox-window">
-    <div class="xp-titlebar">
-      <span class="xp-title-text" id="msgTitle">Системное сообщение</span>
-      <div class="xp-win-btns">
-        <button type="button" class="xp-cap-btn close" id="msgCloseX" title="Закрыть">×</button>
-      </div>
-    </div>
-    <div class="msgbox-content">
-      <svg width="30" height="30" viewBox="0 0 32 32" style="flex-shrink:0" id="msgIconSvg">
-        <polygon points="16,2 30,28 2,28" fill="#FFD700" stroke="#000" stroke-width="1.5"/>
-        <text x="14" y="24" fill="#000" font-weight="bold" font-size="16">!</text>
-      </svg>
-      <div id="msgText" style="white-space:pre-wrap;"></div>
-    </div>
-    <div class="msgbox-actions">
-      <button type="button" class="xp-btn primary full" id="msgOkBtn">ОК</button>
-    </div>
-  </div>
-</div>
-
 <!-- BSOD EASTER EGG -->
-<div class="bsod-screen hidden" id="bsodScreen" title="Нажмите для возврата">
-  <p>A problem has been detected and Windows has been shut down to prevent damage to your mobile device.</p>
-  <p>CRITICAL_SECURITY_VIOLATION_IN_SOC_PERIMETER</p>
-  <p>Check DMARC alignment, enforce FIDO2/Passkeys against AiTM proxies, capture RAM before rebooting compromised hosts, and revoke illicit OAuth2 offline_access grants.</p>
-  <p>*** STOP: 0x000000D1 (0xBLACK1CE, 0x00000002, 0x00000000, 0xF86B5A89)</p>
-  <p style="margin-top:20px;color:#FFFF55;">[ Нажмите в любом месте для возврата ]</p>
+<div id="bsod" role="alertdialog" aria-label="Синий экран Windows">
+  <div>
+    <div class="bsod-badge">Windows XP — BLACK//ICE KERNEL</div>
+    <p>Обнаружена критическая попытка отключить модули цифровой защиты.</p>
+    <p>Система приостановила работу, чтобы предотвратить утечку ваших паролей и одноразовых SMS-кодов злоумышленникам.</p>
+    <p>STOP: 0x000000D1 (0xBLACKICE, 0x00000002, 0x00000000, 0xSAFEZONE)</p>
+    <p>Если вы видите этот экран впервые, просто коснитесь любого места экрана, чтобы вернуться на рабочий стол.</p>
+  </div>
+  <div style="text-align:center;color:#ffff55;">[ Нажмите на экран для перезагрузки в безопасный режим ]</div>
 </div>
 
 <script>
-// ... existing code ...
-const STORAGE_KEY = 'blackice_xp_mobile_v1';
+/* =====================================================================
+   1. WEB AUDIO API — SYNTHESIZED WINDOWS XP SOUND EFFECTS
+   ===================================================================== */
+class XPSoundEngine {
+  constructor() {
+    this.enabled = true;
+    this.ctx = null;
+  }
+  init() {
+    if (!this.ctx) {
+      const AudioCtx = window.AudioContext || window.webkitAudioContext;
+      if (AudioCtx) this.ctx = new AudioCtx();
+    }
+    if (this.ctx && this.ctx.state === "suspended") {
+      this.ctx.resume().catch(() => {});
+    }
+  }
+  tone(freq, dur, type = "sine", delay = 0, vol = 0.08) {
+    if (!this.enabled) return;
+    this.init();
+    if (!this.ctx) return;
+    const now = this.ctx.currentTime + delay;
+    const osc = this.ctx.createOscillator();
+    const gain = this.ctx.createGain();
+    osc.type = type;
+    osc.frequency.setValueAtTime(freq, now);
+    gain.gain.setValueAtTime(0.0001, now);
+    gain.gain.exponentialRampToValueAtTime(vol, now + 0.015);
+    gain.gain.exponentialRampToValueAtTime(0.0001, now + dur);
+    osc.connect(gain);
+    gain.connect(this.ctx.destination);
+    osc.start(now);
+    osc.stop(now + dur + 0.02);
+  }
+  click() {
+    this.tone(950, 0.04, "triangle", 0, 0.05);
+  }
+  balloon() {
+    this.tone(587.33, 0.09, "sine", 0, 0.07);
+    this.tone(880, 0.14, "sine", 0.07, 0.07);
+  }
+  correct() {
+    this.tone(523.25, 0.12, "sine", 0, 0.08);
+    this.tone(659.25, 0.12, "sine", 0.08, 0.08);
+    this.tone(783.99, 0.22, "sine", 0.16, 0.09);
+  }
+  error() {
+    this.tone(220, 0.16, "sawtooth", 0, 0.07);
+    this.tone(175, 0.24, "sawtooth", 0.11, 0.07);
+  }
+  startup() {
+    this.tone(622.25, 0.28, "sine", 0, 0.06);
+    this.tone(466.16, 0.28, "sine", 0.18, 0.06);
+    this.tone(311.13, 0.35, "sine", 0.36, 0.06);
+    this.tone(466.16, 0.45, "sine", 0.54, 0.07);
+  }
+}
+const xpAudio = new XPSoundEngine();
+
+/* =====================================================================
+   2. QUESTION DATABASE (ORIGINAL 10 + 7 + MOBILE CYBER HYGIENE CASES)
+   ===================================================================== */
+const standard = [
+  {q:"Тебе пришло письмо: «Аккаунт заблокируют через 10 минут. Срочно перейдите по ссылке». Что делать?",a:["Сразу перейти по ссылке","Самостоятельно открыть официальный сайт и проверить уведомления","Ответить на письмо","Переслать ссылку друзьям"],c:1,e:"Срочность и угроза блокировки — приём давления. Проверяй уведомления через официальный сайт или приложение."},
+  {q:"Какой пароль из списка наиболее устойчив к подбору?",a:["qwerty2026","Ivan2008!","M0re!Lamp-Cloud-47","password123"],c:2,e:"Длинный уникальный пароль из нескольких слов, цифр и символов устойчивее коротких предсказуемых. Не повторяй один пароль на разных сервисах."},
+  {q:"На сайте есть HTTPS и значок замка. Это означает, что…",a:["Сайт точно настоящий","Сайт проверен антивирусами","Соединение шифруется, но сайт всё ещё может быть мошенническим","На сайте невозможно украсть данные"],c:2,e:"HTTPS защищает канал связи от перехвата, но мошенники тоже легко получают бесплатные SSL-сертификаты для фишинговых копий."},
+  {q:"Знакомый просит прислать код из SMS: «Мне случайно пришёл твой код». Что делать?",a:["Отправить, ведь вы знакомы","Отправить только часть кода","Не сообщать код и связаться с ним другим способом","Написать код в общий чат"],c:2,e:"Одноразовый код подтверждает вход или операцию в твоём аккаунте. Его нельзя передавать даже близким людям."},
+  {q:"Ты нашёл флешку возле компьютера в аудитории. Как поступить?",a:["Подключить и посмотреть содержимое","Подключить на минуту","Передать ответственному сотруднику, не подключая","Подключить к общему компьютеру"],c:2,e:"Неизвестный USB-носитель может содержать вредоносный код или аппаратный эксплойт. Передай находку ответственному."},
+  {q:"Звонящий «сотрудник банка» знает твоё имя и последние цифры карты. Это доказывает, что он настоящий?",a:["Да, такие данные есть только у банка","Да, если номер выглядит официальным","Нет, эти сведения не подтверждают личность звонящего","Да, если говорит уверенно"],c:2,e:"Имя и часть номера карты могут попасть в утечки или чеки. Заверши звонок и сам перезвони по номеру с оборота карты."},
+  {q:"Что поможет защитить аккаунт, если пароль станет известен постороннему?",a:["Тот же пароль с другой буквой","Двухфакторная аутентификация","Записка с паролем рядом с компьютером","Отключение уведомлений о входе"],c:1,e:"Второй фактор (2FA) требует подтверждения через приложение-аутентификатор или ключ безопасности даже при верном пароле."},
+  {q:"Общественный Wi-Fi просит установить неизвестный сертификат или приложение. Что делать?",a:["Установить, иначе не будет интернета","Согласиться, если сеть называется именем кафе","Не устанавливать и уточнить условия у персонала","Ввести пароль от почты"],c:2,e:"Установка корневого сертификата или профиля позволяет владельцу точки доступа расшифровывать твой трафик."},
+  {q:"Знакомый прислал файл, но сообщение странное: «Срочно открой, там фото с тобой». Что разумнее?",a:["Открыть сразу","Уточнить у отправителя другим способом","Отключить защиту и открыть","Скачать на телефон — там безопаснее"],c:1,e:"Аккаунт знакомого могли взломать для рассылки вредоносных файлов (.apk, .exe). Свяжись с ним по телефону или в другом мессенджере."},
+  {q:"Ты удалил файл и очистил корзину. Можно ли гарантировать, что он исчез навсегда?",a:["Да, очистка корзины всегда стирает данные","Да, если перезагрузить компьютер","Нет, удаление обычно не гарантирует немедленного физического стирания данных","Да, если файл маленький"],c:2,e:"Обычное удаление лишь помечает сектора как свободные. Для конфиденциальных файлов используют шифрование диска и шредеры."},
+  {q:"В мессенджере прислали ссылку: «Проголосуй за племянницу в конкурсе!». На странице просят ввести номер телефона и код из приложения. Твои действия?",a:["Ввести данные — это же помощь знакомым","Закрыть страницу: это схема угона аккаунта через привязку устройства","Ввести только номер телефона","Переслать ссылку в семейный чат"],c:1,e:"Так злоумышленники подключают свой браузер как новое устройство к твоему мессенджеру и получают доступ ко всем чатам."},
+  {q:"В аэропорту или кафе ты видишь бесплатную USB-розетку без блока питания. Как зарядить телефон безопаснее?",a:["Подключить напрямую кабелем в USB-порт","Использовать свой сетевой адаптер от обычной розетки 220В или пауэрбанк","Включить режим полёта и подключить в USB","Разрешить передачу данных при подключении"],c:1,e:"Через публичный USB-порт возможна атака Juice Jacking (передача данных вместо только питания). Свой адаптер или пауэрбанк полностью исключают риск."}
+];
+
+const boss = [
+  {q:"На экране телефона или ПК появилось окно: «Система заражена! Срочно позвоните в техподдержку». Что делать?",a:["Позвонить немедленно","Не звонить по номеру из окна, закрыть вкладку браузера и проверить устройство штатным антивирусом","Сообщить оператору код из SMS","Установить программу удалённого доступа по ссылке"],c:[1],e:"Всплывающее предупреждение в браузере — это пугающая реклама (scareware). Настоящий антивирус никогда не просит звонить по телефону."},
+  {q:"Коллега прислал документ. В письме адрес отправителя отличается от привычного на одну букву (например, support@gmai1.com). Что это значит?",a:["Обычную опечатку, можно не проверять","Попытку тайпсквоттинга — имитации настоящего отправителя","Гарантию безопасного вложения","Ничего: отображаемое имя важнее адреса"],c:[1],e:"Подмена похожих символов (l и 1, o и 0) — классический приём целевого фишинга. Сверь домен и уточни отправку по другому каналу."},
+  {q:"Какие действия реально защищают аккаунт в мессенджере и почте? Выбери ВСЕ подходящие.",a:["Уникальный сложный пароль для каждого сервиса","Двухфакторная аутентификация (облачный пароль / 2FA)","Передача резервного кода другу на хранение","Регулярная проверка активных сеансов и завершение незнакомых"],c:[0,1,3],multi:true,e:"Уникальные пароли, 2FA и контроль списка подключённых устройств закрывают 99% попыток взлома. Коды никому не передают."},
+  {q:"На лобовом стекле авто или на стенде в ТЦ наклеен QR-код со штрафом / акцией. Что безопаснее?",a:["Отсканировать и сразу оплатить по СБП","Проверить адрес ссылки до перехода, не вводить данные карты на незнакомых сайтах и сверять штрафы только в официальных приложениях","Переслать фото QR-кода друзьям","Отсканировать с включённым VPN"],c:[1],e:"Квишинг (фишинг через QR-коды) скрывает поддельный домен до момента сканирования. Всегда смотри на доменное имя в адресной строке."},
+  {q:"На общем компьютере ты вошёл в свою почту. Что важно сделать перед уходом?",a:["Просто закрыть вкладку крестиком","Нажать «Выйти» из аккаунта и убедиться, что браузер не сохранил пароль","Оставить почту открытой для следующего человека","Удалить историю посещений, не выходя из профиля"],c:[1],e:"Закрытие вкладки не завершает сессию (cookie остаются активными). Всегда нажимай «Выход» и используй режим Инкогнито на чужих ПК."},
+  {q:"Какие разрешения НЕ нужны простому приложению-фонарику или калькулятору? Выбери ВСЕ лишние.",a:["Доступ к списку контактов","Доступ к микрофону и записи звонков","Доступ к чтению SMS-сообщений","Базовые вычисления на экране"],c:[0,1,2],multi:true,e:"Принцип минимальных привилегий: фонарику и калькулятору не нужны контакты, микрофон и SMS. Лишние права — признак шпионского ПО."},
+  {q:"В общем чате публикуют скриншот, где видны чужая фамилия, номер телефона и адрес. Как поступить?",a:["Переслать дальше для обсуждения","Оставить: это же не пароль от банка","Не распространять и попросить автора удалить или замазать персональные данные","Сохранить в открытый канал"],c:[2],e:"Персональные данные (номер телефона, ФИО, адрес) используются для социальной инженерии и доксинга. Не распространяй их."},
+  {q:"Тебе звонят «из службы безопасности» и просят продиктовать код или перевести деньги на «безопасный счёт». Выбери ВСЕ правильные действия.",a:["Немедленно положить трубку","Назвать только последние 4 цифры карты","Перезвонить в организацию самостоятельно по официальному номеру с сайта или карты","Перевести средства, чтобы их «спасти»"],c:[0,2],multi:true,e:"Никаких «безопасных счетов» не существует. Единственно верная реакция на давление по телефону — прервать разговор и перезвонить самому."}
+];
+
+/* =====================================================================
+   3. WINDOW MANAGER & DESKTOP SHELL LOGIC
+   ===================================================================== */
 const $ = id => document.getElementById(id);
-
-let mode = 'training';
-let pool = [];
-let idx = 0;
-let score = 0;
-let answers = [];
-let timerId = null;
-let timeLeft = 25;
-let locked = false;
-let selected = [];
-let streak = 0;
-let hintUsedInCase = false;
-
-function loadStats() {
-  try {
-    const raw = localStorage.getItem(STORAGE_KEY);
-    return raw ? JSON.parse(raw) : { bestScore: 0, bestRank: 'НЕТ', sessions: 0, lastNick: '' };
-  } catch {
-    return { bestScore: 0, bestRank: 'НЕТ', sessions: 0, lastNick: '' };
-  }
-}
-
-function saveStats(data) {
-  try {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
-  } catch (e) { /* ignore */ }
-  renderHomeTelemetry();
-}
-
-function renderHomeTelemetry() {
-  const st = loadStats();
-  $('hudBestScore').textContent = `${st.bestScore} PTS`;
-  $('hudBestRank').textContent = st.bestRank;
-  $('hudSessions').textContent = st.sessions;
-  if (st.lastNick && !$('nickname').value) {
-    $('nickname').value = st.lastNick;
-  }
-  $('startUserName').textContent = $('nickname').value.trim() || 'Оперативник XP';
-}
+let zCounter = 20;
 
 function updateClock() {
   const now = new Date();
-  const hh = String(now.getHours()).padStart(2, '0');
-  const mm = String(now.getMinutes()).padStart(2, '0');
-  $('trayClock').textContent = `${hh}:${mm}`;
-  $('statusBarClock').textContent = `${hh}:${mm}`;
+  const hh = String(now.getHours()).padStart(2, "0");
+  const mm = String(now.getMinutes()).padStart(2, "0");
+  $("trayClock").textContent = `${hh}:${mm}`;
 }
 updateClock();
 setInterval(updateClock, 15000);
 
-function showBalloon(title, text, silent = false) {
-  $('balloonTitle').textContent = title;
-  $('balloonBody').textContent = text;
-  $('xpBalloon').classList.remove('hidden');
-  if (!silent) SoundFX.balloon();
+function focusWindow(winId) {
+  const target = $(winId);
+  if (!target) return;
+  document.querySelectorAll(".xp-window").forEach(w => w.classList.add("inactive"));
+  target.classList.remove("minimized", "inactive");
+  zCounter++;
+  target.style.zIndex = zCounter;
+  renderTaskbar();
 }
 
-function showXpMessage(title, text, isError = false) {
-  $('msgTitle').textContent = title;
-  $('msgText').textContent = text;
-  const svg = $('msgIconSvg');
-  if (isError) {
-    svg.innerHTML = `<circle cx="16" cy="16" r="14" fill="#C50F1F" stroke="#000" stroke-width="1.5"/><path d="M10 10l12 12M22 10L10 22" stroke="#FFF" stroke-width="3"/>`;
-    SoundFX.xpError();
-  } else {
-    svg.innerHTML = `<polygon points="16,2 30,28 2,28" fill="#FFD700" stroke="#000" stroke-width="1.5"/><text x="14" y="24" fill="#000" font-weight="bold" font-size="16">!</text>`;
-    SoundFX.balloon();
+function openWindow(winId) {
+  xpAudio.click();
+  closeStartMenu();
+  focusWindow(winId);
+  if (winId === "win-mycomp") updateSystemInfo();
+}
+
+function minimizeWindow(winId) {
+  xpAudio.click();
+  const target = $(winId);
+  if (target) {
+    target.classList.add("minimized");
+    target.classList.add("inactive");
   }
-  $('msgModal').classList.remove('hidden');
-  $('msgOkBtn').focus();
+  renderTaskbar();
 }
 
-/* ==========================================================================
-   4. CORE QUIZ ENGINE
-   ========================================================================== */
-const timed = () => mode === 'time' || mode === 'champ';
+function toggleMaximize(winId) {
+  xpAudio.click();
+  const target = $(winId);
+  if (target) {
+    target.classList.toggle("maximized");
+    focusWindow(winId);
+  }
+}
+
+function closeWindow(winId) {
+  xpAudio.click();
+  const target = $(winId);
+  if (target) {
+    target.classList.add("minimized");
+    target.classList.add("inactive");
+    target.dataset.closed = "true";
+  }
+  renderTaskbar();
+}
+
+function renderTaskbar() {
+  const container = $("taskbarTasks");
+  container.replaceChildren();
+  const windows = [...document.querySelectorAll(".xp-window")].filter(w => w.dataset.closed !== "true");
+  windows.forEach(w => {
+    const tab = document.createElement("button");
+    tab.type = "button";
+    const isActive = !w.classList.contains("minimized") && !w.classList.contains("inactive");
+    tab.className = "task-tab" + (isActive ? " active" : "");
+    const title = document.createElement("span");
+    title.textContent = w.dataset.title || "Окно";
+    tab.appendChild(title);
+    tab.addEventListener("click", () => {
+      if (isActive) {
+        minimizeWindow(w.id);
+      } else {
+        focusWindow(w.id);
+      }
+    });
+    container.appendChild(tab);
+  });
+}
+
+// Wire up desktop icons & window controls
+document.querySelectorAll("[data-open]").forEach(el => {
+  el.addEventListener("click", () => {
+    const id = el.dataset.open;
+    const win = $(id);
+    if (win) delete win.dataset.closed;
+    openWindow(id);
+  });
+});
+
+document.querySelectorAll("[data-focus]").forEach(bar => {
+  bar.addEventListener("click", e => {
+    if (e.target.closest(".xp-ctrl-btn")) return;
+    focusWindow(bar.dataset.focus);
+  });
+});
+
+document.querySelectorAll("[data-min]").forEach(btn => {
+  btn.addEventListener("click", () => minimizeWindow(btn.dataset.min));
+});
+
+document.querySelectorAll("[data-max]").forEach(btn => {
+  btn.addEventListener("click", () => toggleMaximize(btn.dataset.max));
+});
+
+document.querySelectorAll("[data-close]").forEach(btn => {
+  btn.addEventListener("click", () => closeWindow(btn.dataset.close));
+});
+
+// Start Menu Toggle
+function closeStartMenu() {
+  $("start-menu").classList.remove("open");
+  $("start-btn").classList.remove("active");
+  $("start-btn").setAttribute("aria-expanded", "false");
+}
+
+$("start-btn").addEventListener("click", e => {
+  e.stopPropagation();
+  xpAudio.click();
+  const isOpen = $("start-menu").classList.toggle("open");
+  $("start-btn").classList.toggle("active", isOpen);
+  $("start-btn").setAttribute("aria-expanded", String(isOpen));
+});
+
+document.addEventListener("click", e => {
+  if (!e.target.closest("#start-menu") && !e.target.closest("#start-btn")) {
+    closeStartMenu();
+  }
+});
+
+// Sound Toggle in Tray & Menu
+function toggleSound() {
+  xpAudio.enabled = !xpAudio.enabled;
+  $("soundIconOn").classList.toggle("hidden", !xpAudio.enabled);
+  $("soundIconOff").classList.toggle("hidden", xpAudio.enabled);
+  $("menuSound").textContent = xpAudio.enabled ? "Звук: ВКЛ" : "Звук: ВЫКЛ";
+  if (xpAudio.enabled) xpAudio.balloon();
+}
+$("traySound").addEventListener("click", toggleSound);
+$("menuSound").addEventListener("click", toggleSound);
+
+// Balloon Notification
+function showBalloon(text) {
+  if (text) {
+    $("xp-balloon").querySelector("div:last-child").innerHTML = text;
+  }
+  $("xp-balloon").classList.add("show");
+  xpAudio.balloon();
+}
+$("trayShield").addEventListener("click", () => showBalloon());
+$("startBalloonBtn").addEventListener("click", () => {
+  closeStartMenu();
+  showBalloon();
+});
+$("closeBalloon").addEventListener("click", () => $("xp-balloon").classList.remove("show"));
+
+// Show welcome balloon shortly after load
+setTimeout(() => showBalloon(), 1200);
+
+// Clippy Assistant
+const clippyPhrases = [
+  "Похоже, ты проверяешь цифровую гигиену! Не забудь: ни один банк не просит код из SMS.",
+  "Совет Скрепыша: длинная фраза из 3–4 случайных слов с цифрами надёжнее сложного короткого пароля.",
+  "Видишь QR-код на уличном объявлении? Всегда проверяй адрес сайта перед вводом любых данных!",
+  "В режиме FINAL BOSS может быть сразу несколько правильных вариантов ответа. Читай внимательно!",
+  "После завершения теста ты можешь сохранить отчёт прямо на Рабочий стол Windows XP!"
+];
+let clippyIdx = 0;
+function sayClippy(customText) {
+  $("clippyBubble").classList.remove("hidden");
+  $("clippyText").textContent = customText || clippyPhrases[clippyIdx++ % clippyPhrases.length];
+  xpAudio.click();
+}
+$("clippyBtn").addEventListener("click", () => sayClippy());
+$("closeClippy").addEventListener("click", e => {
+  e.stopPropagation();
+  $("clippyBubble").classList.add("hidden");
+});
+$("menuClippy").addEventListener("click", () => {
+  $("clippy-box").classList.remove("hidden");
+  sayClippy();
+});
+$("startClippyToggle").addEventListener("click", () => {
+  closeStartMenu();
+  $("clippy-box").classList.toggle("hidden");
+  if (!$("clippy-box").classList.contains("hidden")) sayClippy();
+});
+
+// BSOD Easter Egg
+$("bsodTrigger").addEventListener("click", () => {
+  closeStartMenu();
+  xpAudio.error();
+  $("bsod").classList.add("show");
+});
+$("bsod").addEventListener("click", () => {
+  $("bsod").classList.remove("show");
+  xpAudio.startup();
+});
+
+// Notepad Default Cheat Sheet
+const defaultCheatSheet = `=== ПАМЯТКА ПО КИБЕРБЕЗОПАСНОСТИ (BLACK//ICE XP) ===
+
+1. НИКОМУ НЕ СООБЩАЙ КОДЫ ИЗ SMS И PUSH
+   Настоящие сотрудники банков, госсервисов и операторов
+   никогда не спрашивают одноразовые коды подтверждения.
+
+2. ВКЛЮЧИ ДВУХФАКТОРНУЮ АУТЕНТИФИКАЦИЮ (2FA)
+   Используй приложение-аутентификатор (TOTP) или облачный
+   пароль в мессенджерах.
+
+3. ПРАВИЛО «СРОЧНОСТИ»
+   Если тебя торопят («осталось 5 минут», «счёт заблокируют»),
+   это манипуляция. Положи трубку или закрой письмо.
+
+4. ПРОВЕРЯЙ АДРЕС САЙТА
+   Значок замка (HTTPS) означает шифрование, но не честность
+   владельца сайта. Всегда сверяй буквы в домене.
+
+5. ПУБЛИЧНЫЕ WI-FI И USB
+   Не устанавливай сертификаты в кафе и не подключай телефон
+   напрямую в неизвестные USB-порты без своего адаптера.`;
+
+$("notepadArea").value = defaultCheatSheet;
+$("resetCheatBtn").addEventListener("click", () => {
+  $("notepadTitle").textContent = "Шпаргалка.txt — Блокнот";
+  $("notepadArea").value = defaultCheatSheet;
+  xpAudio.click();
+});
+$("copyNoteBtn").addEventListener("click", () => {
+  $("notepadArea").select();
+  try { document.execCommand("copy"); } catch (_) {}
+  sayClippy("Текст из Блокнота скопирован в буфер обмена!");
+});
+
+// Password Strength Checker & Generator
+function evaluatePassword(pw) {
+  if (!pw) {
+    $("pwBar").style.width = "0%";
+    $("pwVerdict").textContent = "Ожидание ввода...";
+    $("pwTime").textContent = "";
+    return;
+  }
+  let score = 0;
+  if (pw.length >= 8) score += 20;
+  if (pw.length >= 12) score += 20;
+  if (pw.length >= 16) score += 15;
+  if (/[a-zа-я]/.test(pw)) score += 10;
+  if (/[A-ZА-Я]/.test(pw)) score += 12;
+  if (/[0-9]/.test(pw)) score += 11;
+  if (/[^a-zA-Zа-яА-Я0-9]/.test(pw)) score += 12;
+  if (/^(qwerty|12345|password|admin|ivan)/i.test(pw)) score = Math.min(score, 15);
+
+  score = Math.min(100, score);
+  $("pwBar").style.width = score + "%";
+
+  if (score < 35) {
+    $("pwBar").style.background = "#d82c2c";
+    $("pwVerdict").textContent = "Слабый пароль (Высокий риск взлома)";
+    $("pwTime").textContent = "Примерное время подбора: от пары секунд до нескольких минут.";
+  } else if (score < 70) {
+    $("pwBar").style.background = "#f0a500";
+    $("pwVerdict").textContent = "Средний пароль (Можно усилить)";
+    $("pwTime").textContent = "Добавь длину (14+ символов) и спецсимволы.";
+  } else {
+    $("pwBar").style.background = "#229926";
+    $("pwVerdict").textContent = "Надёжный пароль (Отличная стойкость)";
+    $("pwTime").textContent = "Устойчив к перебору по словарям и грубой силе.";
+  }
+}
+$("pwTestInput").addEventListener("input", e => evaluatePassword(e.target.value));
+$("genPwBtn").addEventListener("click", () => {
+  const words = ["Kaktus", "Sokol", "Lampa", "Sever", "Buran", "Kompas", "Tigr", "Yakor", "Veter", "Zvezda"];
+  const syms = ["!", "#", "$", "%", "-", "_"];
+  const w1 = words[Math.floor(Math.random() * words.length)];
+  const w2 = words[Math.floor(Math.random() * words.length)];
+  const num = Math.floor(10 + Math.random() * 89);
+  const s = syms[Math.floor(Math.random() * syms.length)];
+  const generated = `${w1}${s}${w2}-${num}`;
+  $("pwTestInput").value = generated;
+  evaluatePassword(generated);
+  xpAudio.correct();
+});
+
+// Recycle Bin Easter Egg
+$("emptyTrashBtn").addEventListener("click", () => {
+  xpAudio.correct();
+  sayClippy("Корзина очищена! Все фишинговые вложения навсегда удалены с диска.");
+  $("emptyTrashBtn").textContent = "✓ Карантин пуст";
+  $("emptyTrashBtn").disabled = true;
+});
+
+/* =====================================================================
+   4. BLACK//ICE CYBERSECURITY QUIZ ENGINE
+   ===================================================================== */
+let mode = "training", pool = [], idx = 0, score = 0, answers = [], timerId = null, timeLeft = 20, locked = false, selected = [], streak = 0;
+let bestSessionRecord = null;
+let lastReportText = "";
+
+const timed = () => mode === "time" || mode === "champ";
 const correctIndexes = q => Array.isArray(q.c) ? q.c : [q.c];
 
-function showScreen(id) {
-  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-  $(id).classList.add('active');
-  const paths = {
-    home: 'C:\\BLACK_ICE\\ForensicsLab.exe',
-    game: `C:\\BLACK_ICE\\Protocols\\${mode.toUpperCase()}.exe`,
-    results: 'C:\\BLACK_ICE\\Reports\\Debriefing.log'
-  };
-  $('addressPath').textContent = paths[id];
-  window.scrollTo({ top: 0, behavior: 'smooth' });
+function showQuizScreen(name) {
+  ["screen-home", "screen-game", "screen-results"].forEach(id => {
+    $(id).classList.toggle("hidden", id !== "screen-" + name);
+  });
+  $("quizBody").scrollTo({ top: 0, behavior: "smooth" });
 }
 
-function shuffle(arr) {
-  const copy = [...arr];
-  for (let i = copy.length - 1; i > 0; i--) {
+function shuffle(list) {
+  const a = [...list];
+  for (let i = a.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1));
-    [copy[i], copy[j]] = [copy[j], copy[i]];
+    [a[i], a[j]] = [a[j], a[i]];
   }
-  return copy;
+  return a;
+}
+
+function syncUserProfile() {
+  const nick = $("nickname").value.trim() || "Агент BLACK//ICE";
+  $("startUserName").textContent = nick;
+  $("sysUser").textContent = nick;
+}
+$("nickname").addEventListener("input", () => {
+  $("nickname").classList.remove("invalid");
+  syncUserProfile();
+});
+
+function updateSystemInfo() {
+  syncUserProfile();
+  if (bestSessionRecord) {
+    $("sysStatus").textContent = "Проверено (" + bestSessionRecord.rank + ")";
+    $("sysStatus").style.color = "#19821d";
+    $("sysBest").textContent = `${bestSessionRecord.score}/${bestSessionRecord.max} (${bestSessionRecord.pct}%) — ${bestSessionRecord.mode}`;
+  }
+}
+
+function startQuiz(m) {
+  const nick = $("nickname").value.trim();
+  if (!nick) {
+    xpAudio.error();
+    $("nickname").focus();
+    $("nickname").placeholder = "Сначала введи позывной!";
+    $("nickname").classList.add("invalid");
+    sayClippy("Введи свой позывной в поле «Инициализация агента», чтобы начать протокол!");
+    return;
+  }
+  syncUserProfile();
+  xpAudio.click();
+  stopTimer();
+  mode = m;
+  pool = shuffle(m === "boss" ? boss : standard);
+  idx = 0;
+  score = 0;
+  answers = [];
+  streak = 0;
+  const label = { training: "TRAINING", time: "TIME ATTACK", champ: "CHAMPIONSHIP", boss: "FINAL BOSS" }[m];
+  $("modeName").textContent = label;
+  $("quizAddress").textContent = `C:\\Program Files\\BLACK_ICE\\${m}.exe`;
+  showQuizScreen("game");
+  renderQuestion();
 }
 
 function stopTimer() {
@@ -1601,125 +2205,50 @@ function stopTimer() {
   }
 }
 
-function triggerWindowShake() {
-  const win = $('mainWindow');
-  win.classList.remove('shake');
-  void win.offsetWidth;
-  win.classList.add('shake');
-  setTimeout(() => win.classList.remove('shake'), 320);
-}
-
-function startSession(selectedMode) {
-  const nick = $('nickname').value.trim();
-  if (!nick) {
-    $('nickname').focus();
-    $('nickname').setAttribute('aria-invalid', 'true');
-    showXpMessage(
-      'Требуется позывной',
-      'Введите позывной оперативника перед запуском выбранного протокола.',
-      true
-    );
-    return;
-  }
-  $('nickname').removeAttribute('aria-invalid');
-  SoundFX.click();
-
-  const st = loadStats();
-  st.lastNick = nick;
-  saveStats(st);
-
-  stopTimer();
-  mode = selectedMode;
-  pool = shuffle(mode === 'boss' ? bossPool : standardPool);
-  idx = 0;
-  score = 0;
-  answers = [];
-  streak = 0;
-
-  const modeLabels = {
-    training: 'TRAINING',
-    time: 'TIME ATTACK',
-    champ: 'CHAMPIONSHIP',
-    boss: 'FINAL BOSS'
-  };
-  $('modeName').textContent = modeLabels[mode];
-  showScreen('game');
-  renderQuestion();
-}
-
 function renderQuestion() {
   stopTimer();
   locked = false;
   selected = [];
-  hintUsedInCase = false;
-
   const q = pool[idx];
-  $('scoreNow').textContent = `${score} PTS`;
-  $('caseTag').textContent = `КЕЙС ${String(idx + 1).padStart(2, '0')} / ${String(pool.length).padStart(2, '0')}`;
-  $('caseDomain').textContent = q.domain;
-  $('bar').style.width = `${(idx / pool.length) * 100}%`;
-  $('question').textContent = q.q;
 
-  $('evidenceTitle').textContent = q.evidenceTitle || 'Артефакт.log';
-  $('evidenceCode').textContent = q.evidence;
+  $("scoreNow").textContent = score + " ОЧКОВ";
+  $("caseTag").textContent = `КЕЙС ${String(idx + 1).padStart(2, "0")} / ${String(pool.length).padStart(2, "0")}`;
+  $("bar").style.width = (idx / pool.length * 100) + "%";
+  $("typeTag").textContent = q.multi ? "МНОЖЕСТВЕННЫЙ ВЫБОР / ОТМЕТЬ ВСЕ ВЕРНЫЕ" : "ОДИН БЕЗОПАСНЫЙ ВАРИАНТ";
+  $("question").textContent = q.q;
+  $("hint").textContent = q.multi
+    ? "Здесь несколько правильных ответов. Поставь галочки и нажми «Проверить»."
+    : "Выбери наиболее безопасное действие.";
 
-  const inspectBtn = $('inspectBtn');
-  const drawer = $('inspectorDrawer');
-  drawer.classList.add('hidden');
-  drawer.replaceChildren();
+  const answersEl = $("answers");
+  answersEl.replaceChildren();
+  $("feedback").className = "xp-feedback hidden";
+  $("feedback").replaceChildren();
+  $("checkBtn").classList.toggle("hidden", !q.multi);
+  $("checkBtn").disabled = true;
+  $("nextBtn").classList.add("hidden");
+  $("timer").classList.toggle("hidden", !timed());
 
-  if (q.inspectResult) {
-    inspectBtn.classList.remove('hidden');
-    inspectBtn.textContent = q.inspectLabel || 'Декодировать';
-    inspectBtn.disabled = false;
-  } else {
-    inspectBtn.classList.add('hidden');
-  }
-
-  $('terminalHintBox').classList.add('hidden');
-  $('terminalHintBox').textContent = '';
-
-  $('hint').textContent = q.multi
-    ? 'Выберите ВСЕ верные варианты и нажмите «Проверить».'
-    : 'Изучите артефакт и выберите один верный ответ.';
-
-  $('answers').replaceChildren();
-  $('feedback').className = 'xp-dialog-feedback hidden';
-  $('feedback').replaceChildren();
-
-  $('checkBtn').classList.toggle('hidden', !q.multi);
-  $('checkBtn').classList.remove('single-action');
-  $('checkBtn').disabled = true;
-
-  $('nextBtn').classList.add('hidden');
-  $('nextBtn').classList.remove('single-action');
-  $('homeBtn').classList.remove('hidden');
-  $('timer').classList.toggle('hidden', !timed());
-
-  q.a.forEach((optionText, i) => {
-    const btn = document.createElement('button');
-    btn.type = 'button';
-    btn.className = 'xp-answer';
-
-    const mark = document.createElement('span');
-    mark.className = 'xp-marker';
-    mark.textContent = q.multi ? '[ ]' : String.fromCharCode(65 + i);
-
-    const label = document.createElement('span');
-    label.textContent = optionText;
-
-    btn.append(mark, label);
-    btn.addEventListener('click', () => handlePick(i));
-    $('answers').appendChild(btn);
+  q.a.forEach((txt, i) => {
+    const b = document.createElement("button");
+    b.type = "button";
+    b.className = "xp-ans-btn " + (q.multi ? "checkbox" : "radio");
+    const mark = document.createElement("span");
+    mark.className = "xp-marker";
+    mark.textContent = q.multi ? "" : String.fromCharCode(65 + i);
+    const label = document.createElement("span");
+    label.textContent = txt;
+    b.append(mark, label);
+    b.addEventListener("click", () => pickAnswer(i));
+    answersEl.appendChild(b);
   });
 
   if (timed()) {
-    timeLeft = 25;
-    updateTimerDisplay();
+    timeLeft = 20;
+    tickTimer();
     timerId = setInterval(() => {
       timeLeft = Math.max(0, timeLeft - 1);
-      updateTimerDisplay();
-      if (timeLeft > 0 && timeLeft <= 5) SoundFX.tick(true);
+      tickTimer();
       if (timeLeft === 0 && !locked) {
         stopTimer();
         if (q.multi) submitMulti(true);
@@ -1729,42 +2258,24 @@ function renderQuestion() {
   }
 }
 
-function updateTimerDisplay() {
-  $('timer').textContent = `00:${String(timeLeft).padStart(2, '0')}`;
-  $('timer').classList.toggle('urgent', timeLeft <= 5);
+function tickTimer() {
+  $("timer").textContent = "00:" + String(timeLeft).padStart(2, "0");
+  $("timer").classList.toggle("urgent", timeLeft <= 5);
 }
 
-function openInspector() {
-  const q = pool[idx];
-  if (!q || !q.inspectResult) return;
-  SoundFX.balloon();
-  const drawer = $('inspectorDrawer');
-  drawer.replaceChildren();
-  const title = document.createElement('strong');
-  title.textContent = 'Декодер артефакта:';
-  const body = document.createElement('div');
-  body.textContent = q.inspectResult;
-  drawer.append(title, body);
-  drawer.classList.remove('hidden');
-  $('inspectBtn').disabled = true;
-  $('inspectBtn').textContent = 'Декодировано ✓';
-}
-
-function handlePick(i) {
+function pickAnswer(i) {
   if (locked) return;
-  SoundFX.click();
+  xpAudio.click();
   const q = pool[idx];
-  const buttons = [...$('answers').children];
-
+  const buttons = [...$("answers").children];
   if (q.multi) {
-    const pos = selected.indexOf(i);
-    if (pos >= 0) selected.splice(pos, 1);
+    const at = selected.indexOf(i);
+    if (at >= 0) selected.splice(at, 1);
     else selected.push(i);
-
-    const isSel = selected.includes(i);
-    buttons[i].classList.toggle('selected', isSel);
-    buttons[i].querySelector('.xp-marker').textContent = isSel ? '[✓]' : '[ ]';
-    $('checkBtn').disabled = selected.length === 0;
+    const active = selected.includes(i);
+    buttons[i].classList.toggle("selected", active);
+    buttons[i].querySelector(".xp-marker").textContent = active ? "✓" : "";
+    $("checkBtn").disabled = selected.length === 0;
     return;
   }
   submitSingle(i, false);
@@ -1774,489 +2285,259 @@ function submitSingle(choice, timeout) {
   if (locked) return;
   locked = true;
   stopTimer();
-
   const q = pool[idx];
   const target = correctIndexes(q);
-  const isCorrect = target.length === 1 && choice === target[0];
-
-  let points = isCorrect ? 10 : 0;
-  if (isCorrect && timed()) points += Math.floor(timeLeft / 5);
-  if (isCorrect && mode === 'champ' && streak > 0) points += Math.min(streak * 2, 10);
-
+  const correct = target.length === 1 && choice === target[0];
+  let points = correct ? 1 : 0;
+  if (correct && timed()) points += Math.floor(timeLeft / 10);
   score += points;
-  answers.push({ choice, correct: isCorrect, points, timeout });
-  finalizeQuestion(isCorrect, points, timeout);
+  answers.push({ choice, correct, points, timeout });
+  finishQuestion(correct, points, timeout);
 }
 
 function submitMulti(timeout) {
   if (locked) return;
   locked = true;
   stopTimer();
-
   const q = pool[idx];
   const target = correctIndexes(q);
-  const isExact = selected.length === target.length && target.every(x => selected.includes(x));
-  const points = isExact ? 20 : 0;
-
+  const same = selected.length === target.length && target.every(x => selected.includes(x));
+  const points = same ? 2 : 0;
   score += points;
-  answers.push({ choice: [...selected], correct: isExact, points, timeout });
-  finalizeQuestion(isExact, points, timeout);
+  answers.push({ choice: [...selected], correct: same, points, timeout });
+  finishQuestion(same, points, timeout);
 }
 
-function finalizeQuestion(isCorrect, points, timeout) {
+function finishQuestion(correct, points, timeout) {
   const q = pool[idx];
   const target = correctIndexes(q);
   const chosen = answers[idx].choice;
 
-  [...$('answers').children].forEach((btn, i) => {
-    btn.disabled = true;
-    if (target.includes(i)) btn.classList.add('correct');
-    else if (Array.isArray(chosen) ? chosen.includes(i) : chosen === i) btn.classList.add('wrong');
+  if (correct) xpAudio.correct();
+  else xpAudio.error();
 
+  [...$("answers").children].forEach((b, i) => {
+    b.disabled = true;
+    if (target.includes(i)) b.classList.add("correct");
+    else if (Array.isArray(chosen) ? chosen.includes(i) : chosen === i) b.classList.add("wrong");
     if (q.multi) {
-      btn.querySelector('.xp-marker').textContent = target.includes(i)
-        ? '[✓]'
-        : (selected.includes(i) ? '[×]' : '[ ]');
+      b.querySelector(".xp-marker").textContent = target.includes(i) ? "✓" : (selected.includes(i) ? "×" : "");
     }
   });
 
-  streak = isCorrect ? streak + 1 : 0;
-  $('scoreNow').textContent = `${score} PTS`;
-  $('bar').style.width = `${((idx + 1) / pool.length) * 100}%`;
+  streak = correct ? streak + 1 : 0;
+  $("scoreNow").textContent = score + " ОЧКОВ";
+  $("bar").style.width = ((idx + 1) / pool.length * 100) + "%";
 
-  const fb = $('feedback');
-  fb.className = 'xp-dialog-feedback' + (isCorrect ? '' : ' bad');
-  fb.replaceChildren();
+  const f = $("feedback");
+  f.className = "xp-feedback" + (correct ? "" : " bad");
+  f.replaceChildren();
 
-  const head = document.createElement('div');
-  head.className = 'xp-dialog-head';
-  if (timeout) {
-    head.textContent = 'Время вышло (0 PTS)';
-  } else if (isCorrect) {
-    head.textContent = `Верно (+${points} PTS${streak > 1 ? ` · Комбо ×${streak}` : ''})`;
-  } else {
-    head.textContent = 'Ошибка анализа (0 PTS)';
-  }
+  const heading = document.createElement("div");
+  heading.className = "xp-feedback-head";
+  heading.textContent = timeout
+    ? "⏰ ВРЕМЯ ВЫШЛО / 0 ОЧКОВ"
+    : correct
+      ? `✓ ВЕРНО / +${points} ОЧК.${streak > 1 ? ` / СЕРИЯ ×${streak}` : ""}`
+      : "× ОШИБКА / 0 ОЧКОВ";
 
-  const body = document.createElement('div');
-  body.className = 'xp-dialog-body';
-  body.innerHTML = isCorrect
-    ? `<svg width="22" height="22" viewBox="0 0 24 24" style="flex-shrink:0"><circle cx="12" cy="12" r="10" fill="#107C10"/><path d="M7 12l3 3 7-7" stroke="#FFF" stroke-width="2.5" fill="none"/></svg>`
-    : `<svg width="22" height="22" viewBox="0 0 24 24" style="flex-shrink:0"><circle cx="12" cy="12" r="10" fill="#C50F1F"/><path d="M8 8l8 8M16 8l-8 8" stroke="#FFF" stroke-width="2.5"/></svg>`;
+  const explanation = document.createElement("div");
+  explanation.textContent = q.e;
+  f.append(heading, explanation);
 
-  const desc = document.createElement('div');
-  desc.textContent = q.e;
-  body.appendChild(desc);
-  fb.append(head, body);
+  $("checkBtn").classList.add("hidden");
+  $("nextBtn").classList.remove("hidden");
+  $("nextBtn").textContent = idx === pool.length - 1 ? "Завершить протокол →" : "Следующий кейс →";
 
-  $('checkBtn').classList.add('hidden');
-  $('homeBtn').classList.add('hidden');
-  $('nextBtn').classList.remove('hidden');
-  $('nextBtn').classList.add('single-action');
-  $('nextBtn').textContent = idx === pool.length - 1 ? 'Итоговый рапорт ›' : 'Следующий кейс ›';
-
-  if (isCorrect) {
-    SoundFX.xpSuccess();
-  } else {
-    SoundFX.xpError();
-    triggerWindowShake();
-  }
+  if (navigator.vibrate) navigator.vibrate(correct ? 18 : [35, 40, 35]);
 }
 
-function nextStep() {
-  if (!locked) return;
-  SoundFX.click();
-  if (idx < pool.length - 1) {
+function nextQuestion() {
+  xpAudio.click();
+  if (locked && idx < pool.length - 1) {
     idx++;
     renderQuestion();
-  } else {
-    finishSession();
+  } else if (locked) {
+    finishQuiz();
   }
 }
 
-function finishSession() {
+function finishQuiz() {
   stopTimer();
-  const maxPossible = pool.reduce((acc, q) => {
-    if (q.multi) return acc + 20;
-    if (mode === 'champ') return acc + 15 + 8;
-    if (mode === 'time') return acc + 15;
-    return acc + 10;
-  }, 0);
+  const max = pool.reduce((n, q) => n + (q.multi ? 2 : (timed() ? 3 : 1)), 0);
+  const correct = answers.filter(a => a.correct).length;
+  const pct = Math.round(score / max * 100);
+  const nick = $("nickname").value.trim() || "Агент";
 
-  const correctTotal = answers.filter(a => a.correct).length;
-  const accuracy = Math.round((correctTotal / pool.length) * 100);
-
-  let rank, shortRank, desc;
-  if (accuracy >= 90) {
-    rank = 'LEAD THREAT HUNTER';
-    shortRank = 'LEAD SOC';
-    desc = 'Точный анализ заголовков, логов и векторов атак. Вы уверенно выявляете скрытые угрозы.';
-  } else if (accuracy >= 70) {
-    rank = 'SENIOR SOC ANALYST';
-    shortRank = 'SENIOR';
-    desc = 'Уверенный уровень реагирования. Проверьте спорные кейсы в разборе ниже.';
-  } else if (accuracy >= 45) {
-    rank = 'INCIDENT RESPONDER L2';
-    shortRank = 'RESPONDER';
-    desc = 'База есть, но сложные сценарии (AiTM, OAuth, LOLBins) требуют внимательности.';
+  let rank, desc;
+  if (pct >= 90) {
+    rank = "ЭЛИТНЫЙ АНАЛИТИК";
+    desc = "Ты замечаешь цифровые ловушки и не ведёшься на давление. Система под надёжной защитой.";
+  } else if (pct >= 70) {
+    rank = "КИБЕР-СПЕЦИАЛИСТ";
+    desc = "Крепкая база. Пара нюансов требует внимания — разбор кейсов ниже покажет, где именно.";
+  } else if (pct >= 45) {
+    rank = "ЦИФРОВОЙ РАЗВЕДЧИК";
+    desc = "Основы уже знакомы, но в неоднозначных ситуациях стоит замедлиться и перепроверять детали.";
   } else {
-    rank = 'SOC TRAINEE L1';
-    shortRank = 'TRAINEE';
-    desc = 'Изучите разбор кейсов и запустите протокол повторно.';
+    rank = "СТАЖЁР БЕЗОПАСНОСТИ";
+    desc = "Этот раунд — разведка боем. Изучи разбор кейсов и повтори протокол: внимательность важнее скорости.";
   }
 
-  $('finalScore').textContent = `${score} PTS`;
-  $('rank').textContent = rank;
-  $('description').textContent = desc;
-  $('rightCount').textContent = `${correctTotal}/${pool.length}`;
-  $('wrongCount').textContent = pool.length - correctTotal;
-  $('percent').textContent = `${accuracy}%`;
+  $("finalScore").textContent = `${score}/${max}`;
+  $("rank").textContent = rank;
+  $("description").textContent = desc;
+  $("rightCount").textContent = correct;
+  $("wrongCount").textContent = pool.length - correct;
+  $("percent").textContent = pct + "%";
+  $("quizAddress").textContent = `C:\\Program Files\\BLACK_ICE\\report_${nick}.log`;
 
-  const st = loadStats();
-  st.sessions += 1;
-  if (score >= st.bestScore) {
-    st.bestScore = score;
-    st.bestRank = shortRank;
+  const modeLabel = { training: "TRAINING", time: "TIME ATTACK", champ: "CHAMPIONSHIP", boss: "FINAL BOSS" }[mode];
+  if (!bestSessionRecord || pct >= bestSessionRecord.pct) {
+    bestSessionRecord = { score, max, pct, rank, mode: modeLabel };
   }
-  saveStats(st);
+  updateSystemInfo();
 
-  const nick = $('nickname').value.trim() || 'Admin_XP';
-  const dateStr = new Date().toISOString().slice(0, 16).replace('T', ' ') + ' UTC';
-  const dossier = [
-    `[BLACK//ICE XP MOBILE REPORT]`,
-    `Позывной : ${nick}`,
-    `Режим    : ${mode.toUpperCase()}`,
-    `Ранг     : ${rank}`,
-    `Баллы    : ${score} PTS (~макс. ${maxPossible})`,
-    `Точность : ${accuracy}% (${correctTotal}/${pool.length})`,
-    `Дата     : ${dateStr}`
-  ].join('\n');
-  $('dossierText').textContent = dossier;
-
-  const review = $('review');
+  // Build Review List & Text Report
+  const review = $("review");
   review.replaceChildren();
+  let reportLines = [
+    `================================================`,
+    `ОТЧЁТ ЛАБОРАТОРИИ BLACK//ICE XP — SECURITY LAB`,
+    `Агент: ${nick}`,
+    `Протокол: ${modeLabel}`,
+    `Результат: ${score} из ${max} (${pct}%)`,
+    `Ранг: ${rank}`,
+    `================================================\n`
+  ];
+
   pool.forEach((q, i) => {
-    const card = document.createElement('div');
-    card.className = 'review-card';
+    const item = document.createElement("div");
+    item.className = "review-card";
+    const status = document.createElement("div");
+    status.className = answers[i].correct ? "tag-ok" : "tag-err";
+    status.textContent = `${String(i + 1).padStart(2, "0")} / ${answers[i].correct ? "ВЕРНО" : "ОШИБКА"} (+${answers[i].points})`;
 
-    const head = document.createElement('div');
-    head.style.fontWeight = 'bold';
-    head.style.color = answers[i].correct ? '#107C10' : '#C50F1F';
-    head.textContent = `Кейс ${String(i + 1).padStart(2, '0')} · ${answers[i].correct ? 'ВЕРНО' : 'ОШИБКА'} (+${answers[i].points})`;
+    const qDiv = document.createElement("div");
+    qDiv.style.fontWeight = "700";
+    qDiv.style.margin = "3px 0";
+    qDiv.textContent = q.q;
 
-    const qLine = document.createElement('div');
-    qLine.style.fontWeight = 'bold';
-    qLine.style.margin = '3px 0';
-    qLine.textContent = q.q;
+    const choices = Array.isArray(answers[i].choice) ? answers[i].choice : [answers[i].choice];
+    const userTxt = choices.length && choices[0] !== -1 ? choices.map(x => q.a[x]).join("; ") : "Время вышло / ответа нет";
+    const rightTxt = correctIndexes(q).map(x => q.a[x]).join("; ");
 
-    const chosenArr = Array.isArray(answers[i].choice) ? answers[i].choice : [answers[i].choice];
-    const uLine = document.createElement('div');
-    uLine.textContent = 'Ваш выбор: ' + (chosenArr.length && chosenArr[0] !== -1
-      ? chosenArr.map(x => q.a[x]).join(' | ')
-      : 'Время вышло');
+    const uDiv = document.createElement("div");
+    uDiv.textContent = "Твой выбор: " + userTxt;
+    const rDiv = document.createElement("div");
+    rDiv.textContent = "Верно: " + rightTxt;
+    const eDiv = document.createElement("div");
+    eDiv.style.color = "#444";
+    eDiv.style.marginTop = "3px";
+    eDiv.textContent = q.e;
 
-    const cLine = document.createElement('div');
-    cLine.style.color = '#107C10';
-    cLine.textContent = 'Верно: ' + correctIndexes(q).map(x => q.a[x]).join(' | ');
+    item.append(status, qDiv, uDiv, rDiv, eDiv);
+    review.appendChild(item);
 
-    const eLine = document.createElement('div');
-    eLine.style.color = '#444';
-    eLine.style.marginTop = '3px';
-    eLine.textContent = q.e;
-
-    card.append(head, qLine, uLine, cLine, eLine);
-    review.appendChild(card);
+    reportLines.push(`[${i + 1}] ${answers[i].correct ? "OK" : "ERR"} — ${q.q}`);
+    reportLines.push(`    Твой ответ: ${userTxt}`);
+    reportLines.push(`    Правильно:  ${rightTxt}\n`);
   });
 
-  $('review').classList.add('hidden');
-  $('reviewToggle').textContent = 'Разбор всех кейсов';
-  showScreen('results');
+  lastReportText = reportLines.join("\n");
+  $("review").classList.add("hidden");
+  $("reviewToggle").textContent = "📋 Разобрать все кейсы";
+  $("saveDesktopBtn").disabled = false;
+  $("saveDesktopBtn").textContent = "💾 Сохранить отчёт на Рабочий стол";
+  showQuizScreen("results");
+
+  if (pct >= 70) {
+    showBalloon(`Проверка завершена! Присвоен ранг: <b>${rank}</b> (${pct}%).`);
+  }
 }
 
-/* ==========================================================================
-   5. CMD.EXE CONSOLE & MOBILE XP SHELL INTERACTIONS
-   ========================================================================== */
-const Terminal = (() => {
-  const modal = $('termModal');
-  const out = $('termOutput');
-  const input = $('termInput');
+// Save Report Icon directly to XP Desktop
+$("saveDesktopBtn").addEventListener("click", () => {
+  xpAudio.correct();
+  const nick = ($("nickname").value.trim() || "Agent").replace(/[^a-zA-Zа-яА-Я0-9_-]/g, "");
+  const fileName = `Отчёт_${nick}.txt`;
 
-  function log(text, color = '#C0C0C0') {
-    const line = document.createElement('div');
-    line.style.color = color;
-    line.textContent = text;
-    out.appendChild(line);
-    out.scrollTop = out.scrollHeight;
-  }
-
-  function open() {
-    SoundFX.click();
-    modal.classList.remove('hidden');
-    if (out.children.length === 0) {
-      log('Microsoft Windows XP [Mobile SOC]');
-      log('Команды: help, scan, hint, bsod, cls\n', '#FFFF55');
-    }
-    setTimeout(() => input.focus(), 40);
-  }
-
-  function close() {
-    SoundFX.click();
-    modal.classList.add('hidden');
-  }
-
-  function exec(rawCmd) {
-    const cmd = rawCmd.trim().toLowerCase();
-    if (!cmd) return;
-    log(`C:\\>${rawCmd}`, '#FFFFFF');
-    SoundFX.click();
-
-    const inGame = $('game').classList.contains('active');
-
-    switch (cmd) {
-      case 'help':
-        log('help — список команд', '#55FFFF');
-        log('scan — данные текущего кейса');
-        log('hint — подсказка к кейсу (-2 PTS)');
-        log('bsod — вызвать синий экран');
-        log('cls  — очистить экран');
-        break;
-
-      case 'scan':
-        if (!inGame) {
-          log('Нет активного кейса. Запустите режим.', '#FFFF55');
-        } else {
-          const q = pool[idx];
-          SoundFX.balloon();
-          log(`Домен : ${q.domain}`, '#55FF55');
-          log(`Тип   : ${q.multi ? 'Множественный выбор' : 'Один ответ'}`);
-        }
-        break;
-
-      case 'hint':
-        if (!inGame || locked) {
-          log('Подсказка доступна во время активного кейса.', '#FFFF55');
-        } else {
-          const q = pool[idx];
-          if (!hintUsedInCase) {
-            hintUsedInCase = true;
-            score = Math.max(0, score - 2);
-            $('scoreNow').textContent = `${score} PTS`;
-          }
-          $('terminalHintBox').textContent = `💡 Подсказка: ${q.hint}`;
-          $('terminalHintBox').classList.remove('hidden');
-          close();
-          SoundFX.balloon();
-        }
-        break;
-
-      case 'bsod':
-        close();
-        triggerBsod();
-        break;
-
-      case 'cls':
-      case 'clear':
-        out.replaceChildren();
-        break;
-
-      default:
-        SoundFX.xpError();
-        log(`Неизвестная команда: ${rawCmd}`, '#FF5555');
-    }
-  }
-
-  return { open, close, exec };
-})();
-
-function triggerBsod() {
-  SoundFX.xpError();
-  $('bsodScreen').classList.remove('hidden');
-}
-
-/* ==========================================================================
-   6. EVENT BINDINGS
-   ========================================================================== */
-const randomCallsigns = ['Admin_XP', 'Cyber_Luna', 'NetRunner_01', 'Trace_Route', 'SOC_Mobile', 'Kernel_99'];
-
-$('genCallsignBtn').addEventListener('click', () => {
-  SoundFX.click();
-  $('nickname').value = randomCallsigns[Math.floor(Math.random() * randomCallsigns.length)];
-  $('nickname').removeAttribute('aria-invalid');
-  $('startUserName').textContent = $('nickname').value;
-});
-
-$('resetStatsBtn').addEventListener('click', () => {
-  SoundFX.click();
-  localStorage.removeItem(STORAGE_KEY);
-  renderHomeTelemetry();
-  showBalloon('Статистика сброшена', 'Локальные результаты очищены.');
-});
-
-document.querySelectorAll('.xp-mode-btn').forEach(btn => {
-  btn.addEventListener('click', () => startSession(btn.dataset.mode));
-});
-
-$('inspectBtn').addEventListener('click', openInspector);
-$('quickCmdBtn').addEventListener('click', Terminal.open);
-$('checkBtn').addEventListener('click', () => submitMulti(false));
-$('nextBtn').addEventListener('click', nextStep);
-$('homeBtn').addEventListener('click', () => {
-  SoundFX.click();
-  stopTimer();
-  showScreen('home');
-});
-$('again').addEventListener('click', () => startSession(mode));
-$('backHome').addEventListener('click', () => {
-  SoundFX.click();
-  showScreen('home');
-});
-
-$('reviewToggle').addEventListener('click', () => {
-  SoundFX.click();
-  const rev = $('review');
-  rev.classList.toggle('hidden');
-  $('reviewToggle').textContent = rev.classList.contains('hidden')
-    ? 'Разбор всех кейсов'
-    : 'Скрыть разбор';
-});
-
-$('copyDossierBtn').addEventListener('click', () => {
-  SoundFX.balloon();
-  const text = $('dossierText').textContent;
-  const ta = document.createElement('textarea');
-  ta.value = text;
-  ta.style.position = 'fixed';
-  ta.style.opacity = '0';
-  document.body.appendChild(ta);
-  ta.select();
-  try {
-    document.execCommand('copy');
-    showBalloon('Буфер обмена', 'Рапорт скопирован в буфер обмена.');
-  } catch (e) {
-    showXpMessage('Ошибка', 'Не удалось скопировать текст.', true);
-  }
-  document.body.removeChild(ta);
-});
-
-/* Window Titlebar & Taskbar */
-$('btnMin').addEventListener('click', () => {
-  SoundFX.click();
-  $('mainWindow').classList.add('minimized');
-  $('taskMainTab').classList.remove('active-tab');
-});
-$('btnClose').addEventListener('click', () => {
-  $('mainWindow').classList.add('minimized');
-  $('taskMainTab').classList.remove('active-tab');
-  showBalloon('Свёрнуто в панель задач', 'Нажмите на ярлык BLACK//ICE или вкладку внизу, чтобы развернуть.');
-});
-$('taskMainTab').addEventListener('click', () => {
-  SoundFX.click();
-  const win = $('mainWindow');
-  const isMin = win.classList.contains('minimized');
-  win.classList.toggle('minimized', !isMin);
-  $('taskMainTab').classList.toggle('active-tab', isMin);
-});
-
-/* Mobile Shortcut Dock */
-function selectDockIcon(el) {
-  document.querySelectorAll('.d-icon').forEach(i => i.classList.remove('selected'));
-  el.classList.add('selected');
-}
-$('iconApp').addEventListener('click', e => {
-  selectDockIcon(e.currentTarget);
-  SoundFX.click();
-  $('mainWindow').classList.remove('minimized');
-  $('taskMainTab').classList.add('active-tab');
-});
-$('iconCmd').addEventListener('click', e => {
-  selectDockIcon(e.currentTarget);
-  Terminal.open();
-});
-$('iconNotes').addEventListener('click', e => {
-  selectDockIcon(e.currentTarget);
-  showXpMessage(
-    'Памятка SOC.txt',
-    '• Проверяйте DMARC alignment и Punycode (xn--).\n• FIDO2/Passkeys защищают от AiTM, SMS — нет.\n• На сервере сначала дамп RAM, потом ребут.\n• В cmd.exe доступна команда hint (-2 PTS).'
-  );
-});
-$('iconBsod').addEventListener('click', e => {
-  selectDockIcon(e.currentTarget);
-  triggerBsod();
-});
-
-/* Mobile Start Menu */
-const startMenu = $('startMenu');
-const startBtn = $('startBtn');
-
-function closeStartMenu() {
-  startMenu.classList.add('hidden');
-  startBtn.classList.remove('open');
-  startBtn.setAttribute('aria-expanded', 'false');
-}
-
-startBtn.addEventListener('click', e => {
-  e.stopPropagation();
-  SoundFX.click();
-  const isHidden = startMenu.classList.contains('hidden');
-  if (isHidden) {
-    $('startUserName').textContent = $('nickname').value.trim() || 'Оперативник XP';
-    startMenu.classList.remove('hidden');
-    startBtn.classList.add('open');
-    startBtn.setAttribute('aria-expanded', 'true');
+  // Avoid duplicate icons if clicked twice, update content instead
+  let existing = document.getElementById("desk-report-icon");
+  if (!existing) {
+    existing = document.createElement("button");
+    existing.type = "button";
+    existing.id = "desk-report-icon";
+    existing.className = "desk-icon";
+    existing.innerHTML = `
+      <svg viewBox="0 0 48 48">
+        <rect x="9" y="6" width="30" height="36" rx="2" fill="#fff" stroke="#229926" stroke-width="2"/>
+        <rect x="9" y="6" width="30" height="7" fill="#37d23c"/>
+        <line x1="14" y1="19" x2="34" y2="19" stroke="#229926" stroke-width="2"/>
+        <line x1="14" y1="25" x2="31" y2="25" stroke="#555" stroke-width="2"/>
+        <line x1="14" y1="31" x2="27" y2="31" stroke="#555" stroke-width="2"/>
+      </svg>
+      <span>${fileName}</span>
+    `;
+    $("desktopIcons").appendChild(existing);
   } else {
-    closeStartMenu();
+    existing.querySelector("span").textContent = fileName;
   }
+
+  existing.onclick = () => {
+    delete $("win-notepad").dataset.closed;
+    $("notepadTitle").textContent = `${fileName} — Блокнот`;
+    $("notepadArea").value = lastReportText;
+    openWindow("win-notepad");
+  };
+
+  $("saveDesktopBtn").textContent = "✓ Сохранено на Рабочий стол!";
+  $("saveDesktopBtn").disabled = true;
+  sayClippy(`Файл «${fileName}» создан на Рабочем столе! Нажми на него, чтобы открыть в Блокноте.`);
 });
 
-document.addEventListener('click', e => {
-  if (!startMenu.contains(e.target) && e.target !== startBtn) {
-    closeStartMenu();
-  }
+// Quiz Event Listeners
+document.querySelectorAll(".xp-mode-card").forEach(btn => {
+  btn.addEventListener("click", () => startQuiz(btn.dataset.mode));
+});
+$("checkBtn").addEventListener("click", () => submitMulti(false));
+$("nextBtn").addEventListener("click", nextQuestion);
+$("homeBtn").addEventListener("click", () => {
+  xpAudio.click();
+  stopTimer();
+  $("quizAddress").textContent = "C:\\Program Files\\BLACK_ICE\\lab.exe";
+  showQuizScreen("home");
+});
+$("menuRestart").addEventListener("click", () => {
+  xpAudio.click();
+  stopTimer();
+  showQuizScreen("home");
+});
+$("again").addEventListener("click", () => startQuiz(mode));
+$("backHome").addEventListener("click", () => {
+  xpAudio.click();
+  stopTimer();
+  showQuizScreen("home");
+});
+$("reviewToggle").addEventListener("click", () => {
+  xpAudio.click();
+  const rev = $("review");
+  rev.classList.toggle("hidden");
+  $("reviewToggle").textContent = rev.classList.contains("hidden") ? "📋 Разобрать все кейсы" : "▲ Скрыть разбор";
 });
 
-document.querySelectorAll('[data-start-mode]').forEach(btn => {
-  btn.addEventListener('click', () => {
-    closeStartMenu();
-    $('mainWindow').classList.remove('minimized');
-    $('taskMainTab').classList.add('active-tab');
-    startSession(btn.dataset.startMode);
-  });
-});
-$('startOpenCmd').addEventListener('click', () => { closeStartMenu(); Terminal.open(); });
-$('startNotes').addEventListener('click', () => { closeStartMenu(); $('iconNotes').click(); });
-$('startBsod').addEventListener('click', () => { closeStartMenu(); triggerBsod(); });
-$('startShutdown').addEventListener('click', () => { closeStartMenu(); triggerBsod(); });
-
-function toggleSfxUi() {
-  const on = SoundFX.toggle();
-  $('sfxIcon').style.opacity = on ? '1' : '0.4';
-  $('statusAudioTag').textContent = on ? 'SFX' : 'MUTE';
-  showBalloon('Звук Windows XP', on ? 'Звуковые эффекты включены.' : 'Звук выключен.');
-}
-$('sfxToggle').addEventListener('click', toggleSfxUi);
-$('startToggleSfx').addEventListener('click', () => { closeStartMenu(); toggleSfxUi(); });
-
-$('balloonClose').addEventListener('click', () => $('xpBalloon').classList.add('hidden'));
-
-$('termClose').addEventListener('click', Terminal.close);
-$('termForm').addEventListener('submit', e => {
-  e.preventDefault();
-  Terminal.exec($('termInput').value);
-  $('termInput').value = '';
+// Keyboard shortcuts support
+document.addEventListener("keydown", event => {
+  if ($("screen-game").classList.contains("hidden") || locked || event.altKey || event.ctrlKey || event.metaKey) return;
+  const key = event.key.toLowerCase();
+  if (key >= "1" && key <= "4") pickAnswer(Number(key) - 1);
+  if (key === "enter" && pool[idx]?.multi && !$("checkBtn").disabled) submitMulti(false);
 });
 
-$('msgOkBtn').addEventListener('click', () => { SoundFX.click(); $('msgModal').classList.add('hidden'); });
-$('msgCloseX').addEventListener('click', () => { SoundFX.click(); $('msgModal').classList.add('hidden'); });
+window.addEventListener("pagehide", stopTimer);
 
-$('bsodScreen').addEventListener('click', () => {
-  $('bsodScreen').classList.add('hidden');
-  SoundFX.xpSuccess();
-});
-
-$('nickname').addEventListener('input', () => $('nickname').removeAttribute('aria-invalid'));
-
-window.addEventListener('pagehide', stopTimer);
-renderHomeTelemetry();
+// Initial taskbar render
+renderTaskbar();
 </script>
 </body>
 </html>
